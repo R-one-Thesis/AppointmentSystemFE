@@ -2,17 +2,17 @@
     <div class="login-container justify-center column items-center">
         <q-card class="q-ma-xl form-card">
             <div class="row custom-container">
-                <div class="col bg-primary rounded-left-borders md-hide xs-hide sm-hide">
+                <!-- <div class="col bg-primary rounded-left-borders md-hide xs-hide sm-hide">
                     <div class="row full-width full-height flex flex-center">
                     </div>
-                </div>
+                </div> -->
                 <div class="col">
-                    <div class="row q-pa-xl" style="min-height: 60vh;  ">
-                        <div class="col-12 login-image">
+                    <div class="row q-pa-sm justify-center" style="min-height: 60vh;  ">
+                        <div class="col-8 login-image">
                             <q-card-section class="full-height flex column justify-center q-p-lg">
                                 <div class="flex column items-center justify-center q-mb-lg">
-                                    <div class="text-h4 text-uppercase q-my-none text-weight-bold text-primary q-mb-sm">
-                                        Login</div>
+                                    <div class="text-h4 text-uppercase q-my-none text-weight-bold text-primary q-mb-sm text-center">
+                                        Dental Clinic Online Appointment System</div>
                                     <p class="mt-4">Please login in using your account</p>
                                 </div>
                                 <q-form class="q-gutter-md">
@@ -27,7 +27,7 @@
                                                 class="cursor-pointer" @click="isPwd = !isPwd"></q-icon>
                                         </template>
                                     </q-input>
-                                    <q-btn class="full-width no-caps q-pa-sm" color="primary" label="Sign in" rounded
+                                    <q-btn class="full-width no-caps q-pa-sm custom-btn" color="primary" label="Sign in" rounded
                                         @click="login" :loading="loading"></q-btn>
                                 </q-form>
                             </q-card-section>
@@ -44,7 +44,7 @@
         /* margin: 0 20px; */
     }
     .form-card {
-        width: 60vw;
+        width: 40vw;
         margin: 0 auto;
     }
 

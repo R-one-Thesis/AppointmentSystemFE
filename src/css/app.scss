@@ -6,6 +6,10 @@
 .q-table__card {
   border-radius: 0;
 }
+
+.custom-btn {
+  border-radius: 0 !important;
+}
 .q-layout.q-layout--standard.darkModeClass span {
   color: white !important;
 }
@@ -65,11 +69,15 @@
 .drawerClass {
   background-color: white;
   width: 250px;
-  border-radius: 20px;
-  border: solid #f1dec9 2px;
+  border-radius: 0;
+  border: solid var(--q-primary) 2px;
 }
 .drawerActive {
-  background-color: #f1dec9;
+  background-color: var(--q-primary) !important;
+}
+
+.login-container .q-field__control {
+  border-radius: 0 !important;
 }
 
 .custom-input .q-field__label {
@@ -79,6 +87,7 @@
   background: white;
   z-index: 2;
   padding: 0px 10px;
+  border-radius: 0 !important;
 }
 .custom-input-select .q-field__label {
   font-weight: bold;
@@ -87,6 +96,7 @@
   background: white;
   z-index: 2;
   padding: 0px 10px;
+  border-radius: 0 !important;
 }
 .custom-input-select .q-field__control-container {
   padding-top: 5px !important;
