@@ -1,0 +1,115 @@
+// app global css in SCSS form
+.bg-main {
+  background-color: #f8f8f8 !important; /* Replace 'your-color' with your desired background color */
+}
+
+.q-table__card {
+  border-radius: 0;
+}
+.q-layout.q-layout--standard.darkModeClass span {
+  color: white !important;
+}
+.darkModeClass .q-table__container,
+.dark-mode .q-card,
+.dark-mode .custom-input .q-field__label.no-pointer-events.absolute.ellipsis,
+.dark-mode .q-field--outlined .q-field__control:before,
+.dark-mode .custom-input-select .q-field__label,
+.dark-mode .q-field__label {
+  border-color: white !important;
+  color: white !important;
+  background-color: var(--q-dark) !important;
+  background: var(--q-dark) !important;
+}
+.dark-mode .custom-input input,
+.dark-mode .custom-input-select span,
+.dark-mode .q-field__append,
+.dark-mode .q-placeholder {
+  color: white !important;
+}
+.dark-mode .q-field__control:before {
+  border-bottom: solid white 1px;
+}
+.dark-mode .q-table thead,
+.dark-mode .q-table tr,
+.dark-mode .q-table th,
+.dark-mode .q-table td {
+  border: solid 0.1px white !important;
+  color: white !important;
+  background-color: var(--q-dark) !important;
+}
+.qr-stream-overlay {
+  background: url("src/assets/qr-overlay.png") !important;
+}
+.dark-mode .q-btn--standard {
+  color: black !important;
+}
+
+.qr-dialog
+  .q-dialog__inner.flex.no-pointer-events.q-dialog__inner--minimized.q-dialog__inner--standard.fixed-full.flex-center {
+  padding: 0 !important;
+}
+.q-pa-md {
+  height: 92vh;
+}
+.q-pa-md.unmodify {
+  height: auto !important;
+}
+
+.bg-button1 {
+  background-color: #444;
+}
+
+.text-color1 {
+  color: #444;
+}
+.drawerClass {
+  background-color: white;
+  width: 250px;
+  border-radius: 20px;
+  border: solid #f1dec9 2px;
+}
+.drawerActive {
+  background-color: #f1dec9;
+}
+
+.custom-input .q-field__label {
+  font-weight: bold;
+  font-size: 14px;
+  top: -6px;
+  background: white;
+  z-index: 2;
+  padding: 0px 10px;
+}
+.custom-input-select .q-field__label {
+  font-weight: bold;
+  font-size: 14px;
+  top: -6px;
+  background: white;
+  z-index: 2;
+  padding: 0px 10px;
+}
+.custom-input-select .q-field__control-container {
+  padding-top: 5px !important;
+}
+
+.custom-input-select .q-field__native {
+  z-index: 3 !important;
+}
+.custom-input .q-field__native {
+  z-index: 3 !important;
+  padding-top: 8px !important;
+  padding-bottom: 2px !important;
+}
+.custom-input-select .q-field__label {
+  transform: translateY(-30%) scale(1) !important;
+}
+.custom-input .q-field__label {
+  transform: translateY(-30%) scale(1) !important;
+}
+
+.card .bot-details .my-qur .img-qr {
+  width: 75px !important;
+}
+.my-qur {
+  line-height: 0 !important;
+}
