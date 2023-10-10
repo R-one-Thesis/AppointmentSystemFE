@@ -123,7 +123,7 @@ module.exports = configure(function (/* ctx */) {
       plugins: [
         'AppFullscreen',
         'Dialog',
-        'Notify'
+        'Notify',
       ]
     },
 

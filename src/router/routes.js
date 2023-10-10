@@ -93,10 +93,11 @@ const routes = [
     roles:["any"]
   },
 
+
   {
-    path: '/Receipt', 
-    component: () => import('components/Receipt.vue'),
-    name: 'Receipt',
+    path: '/Calendar', 
+    component: () => import('components/Calendar.vue'),
+    name: 'Calendar',
     roles:["any"]
   },
 
