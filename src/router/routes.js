@@ -68,19 +68,19 @@ const routes = [
           // Add more routes for the Management group here
         ]
       },
-      // {
-      //   path: '/',
-      //   meta: { label: 'Transactions', icon: 'group', roles: ['any'] }, // Group label and icon
-      //   children: [
-      //     {
-      //       path: '/View-Transactions', 
-      //       component: () => import('pages/Transactions/Transactions.vue'),
-      //       name: 'View Transactions',
-      //       meta: { icon: 'dashboard', roles: ['any'] }
-      //     },
-      //     // Add more routes for the Management group here
-      //   ]
-      // },
+      {
+        path: '/',
+        meta: { label: 'Transactions', icon: 'group', roles: ['any'] }, // Group label and icon
+        children: [
+          {
+            path: '/View-Transactions', 
+            component: () => import('pages/Transactions/Transactions.vue'),
+            name: 'View Transactions',
+            meta: { icon: 'dashboard', roles: ['any'] }
+          },
+          // Add more routes for the Management group here
+        ]
+      },
       
       
      
@@ -98,6 +98,20 @@ const routes = [
     path: '/Calendar', 
     component: () => import('components/Calendar.vue'),
     name: 'Calendar',
+    roles:["any"]
+  },
+
+  {
+    path: '/CalendarDay', 
+    component: () => import('components/CalendarDay.vue'),
+    name: 'CalendarDay',
+    roles:["any"]
+  },
+
+  {
+    path: '/Hello', 
+    component: () => import('components/Hello.vue'),
+    name: 'Hello',
     roles:["any"]
   },
 
