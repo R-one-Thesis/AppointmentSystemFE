@@ -33,10 +33,10 @@
             color="white"
           />
           <div class="head-prof">
-            <div @click="toggleDarkMode">
+            <!-- <div @click="toggleDarkMode">
               <i class="fas fa-toggle-off" v-if="!darkMode"></i>
               <i class="fas fa-toggle-on" v-else></i>
-            </div>
+            </div> -->
             <profile />
           </div>
         </q-toolbar>

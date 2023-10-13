@@ -83,7 +83,7 @@ const getUserDetails = async () => {
   if (userId) {
     // Fetch user details from local storage using the user ID
     const userDetails = await api.get("api/users/" + userId.value);
-    console.log(userDetails);
+    // console.log(userDetails);
     if (userDetails.status == "200") {
       userProfile.value = userDetails.data.user;
     } else {
@@ -112,14 +112,14 @@ const logout = () => {
       authInstance.roles = null;
       localStorage.clear()
       window.location.reload();
-      console.log(response)
+      // console.log(response)
       
       loggingOut.value = false;
      
       
     })
     .catch((error) => {
-      console.log(error)
+      // console.log(error)
       $q.notify({
         color: "negative",
         position: "top",

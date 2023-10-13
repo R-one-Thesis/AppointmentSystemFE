@@ -5,7 +5,6 @@
     @prev="onPrev"
     @next="onNext"
   />
-
  
 
   <div style="display: flex; justify-content: center; align-items: center; flex-wrap: nowrap;">
@@ -51,25 +50,10 @@
         </q-calendar-month>
       </div>
     </div>
+    <AddSchedule />
   
   </div>
-  <q-btn
-      label="Add Record (+)"
-      @click="openDialog"
-      class="q-mt-md q-mb-md bg-button1 text-white"
-    />
-
-    <q-dialog v-model="formProfile" persistent transition-show="flip-down" @hide="onHide">
-      <div class="q-dialog__inner">
-        <div class="q-dialog__title">Dialog Title</div>
-        <div class="q-dialog__content">
-          <!-- Dialog content goes here -->
-        </div>
-        <div class="q-dialog__actions">
-          <q-btn label="Close" color="primary" @click="closeDialog" />
-        </div>
-      </div>
-    </q-dialog>
+ 
 </template>
 
 <script>
@@ -86,6 +70,7 @@ import '@quasar/quasar-ui-qcalendar/src/QCalendarMonth.sass'
 
 import { defineComponent, ref, computed } from 'vue'
 import NavigationBar from '../components/NavigationBar.vue'
+import AddSchedule from '../components/AddSchedule.vue'
 
 
 const formProfile = ref(false);
@@ -106,6 +91,7 @@ export default defineComponent({
   name: 'MonthSlotDay',
   components: {
       NavigationBar,
+      AddSchedule,
     QCalendarMonth
   },
 
@@ -223,46 +209,46 @@ export default defineComponent({
       return s
     },
     
-    onToday () {
-      this.$refs.calendar.moveToToday()
-    },
-    onPrev () {
-      this.$refs.calendar.prev()
-    },
-    onNext () {
-      this.$refs.calendar.next()
-      console.log(this.$refs.calendar)
-    },
-    onMoved (data) {
-      console.log('onMoved', data)
-    },
-    onChange (data) {
-      console.log('onChange', data)
-      this.current_year = new Date(this.selectedDate).getFullYear()
-    },
-    onClickDate (data) {
-      console.log('onClickDate', data)
-    },
-    onClickDay (data) {
-      console.log('onClickDay', data)
-    },
-    onClickWorkweek (data) {
-      console.log('onClickWorkweek', data)
-    },
-    onClickHeadDay (data) {
-      console.log('onClickHeadDay', data)
-    },
-    onClickHeadWorkweek (data) {
-      console.log('onClickHeadWorkweek', data)
-    },
-    openDialog() {
-  formProfile.value = true;
-    console.log('test');
-  },
+  //   onToday () {
+  //     this.$refs.calendar.moveToToday()
+  //   },
+  //   onPrev () {
+  //     this.$refs.calendar.prev()
+  //   },
+  //   onNext () {
+  //     this.$refs.calendar.next()
+  //     console.log(this.$refs.calendar)
+  //   },
+  //   onMoved (data) {
+  //     console.log('onMoved', data)
+  //   },
+  //   onChange (data) {
+  //     console.log('onChange', data)
+  //     this.current_year = new Date(this.selectedDate).getFullYear()
+  //   },
+  //   onClickDate (data) {
+  //     console.log('onClickDate', data)
+  //   },
+  //   onClickDay (data) {
+  //     console.log('onClickDay', data)
+  //   },
+  //   onClickWorkweek (data) {
+  //     console.log('onClickWorkweek', data)
+  //   },
+  //   onClickHeadDay (data) {
+  //     console.log('onClickHeadDay', data)
+  //   },
+  //   onClickHeadWorkweek (data) {
+  //     console.log('onClickHeadWorkweek', data)
+  //   },
+  //   openDialog() {
+  // formProfile.value = true;
+  //   console.log('test');
+  // },
 
-  closeDialog()  {
-    formProfile.value = false;
-  },
+  // closeDialog()  {
+  //   formProfile.value = false;
+  // },
   }
 })
 

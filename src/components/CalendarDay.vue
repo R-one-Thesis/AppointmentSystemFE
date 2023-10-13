@@ -212,41 +212,41 @@
         return events
       },
   
-      scrollToEvent (event) {
-        this.$refs.calendar.scrollToTime(event.time, 350)
-      },
+      // scrollToEvent (event) {
+      //   this.$refs.calendar.scrollToTime(event.time, 350)
+      // },
   
-      onToday () {
-        this.$refs.calendar.moveToToday()
-      },
-      onPrev () {
-        this.$refs.calendar.prev()
-      },
-      onNext () {
-        this.$refs.calendar.next()
-      },
+      // onToday () {
+      //   this.$refs.calendar.moveToToday()
+      // },
+      // onPrev () {
+      //   this.$refs.calendar.prev()
+      // },
+      // onNext () {
+      //   this.$refs.calendar.next()
+      // },
   
-      onMoved (data) {
-        console.log('onMoved', data)
-      },
-      onChange (data) {
-        console.log('onChange', data)
-      },
-      onClickDate (data) {
-        console.log('onClickDate', data)
-      },
-      onClickTime (data) {
-        console.log('onClickTime', data)
-      },
-      onClickInterval (data) {
-        console.log('onClickInterval', data)
-      },
-      onClickHeadIntervals (data) {
-        console.log('onClickHeadIntervals', data)
-      },
-      onClickHeadDay (data) {
-        console.log('onClickHeadDay', data)
-      }
+      // onMoved (data) {
+      //   console.log('onMoved', data)
+      // },
+      // onChange (data) {
+      //   console.log('onChange', data)
+      // },
+      // onClickDate (data) {
+      //   console.log('onClickDate', data)
+      // },
+      // onClickTime (data) {
+      //   console.log('onClickTime', data)
+      // },
+      // onClickInterval (data) {
+      //   console.log('onClickInterval', data)
+      // },
+      // onClickHeadIntervals (data) {
+      //   console.log('onClickHeadIntervals', data)
+      // },
+      // onClickHeadDay (data) {
+      //   console.log('onClickHeadDay', data)
+      // }
     }
   })
   </script>
