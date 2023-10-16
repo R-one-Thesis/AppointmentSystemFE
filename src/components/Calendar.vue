@@ -250,47 +250,47 @@
         
       },
   
-      // badgeStyles (day, event) {
-      //   const s = {}
-      //   // s.left = day.weekday === 0 ? 0 : (day.weekday * this.parsedCellWidth) + '%'
-      //   // s.top = 0
-      //   // s.bottom = 0
-      //   // s.width = (event.days * this.parsedCellWidth) + '%'
-      //   return s
-      // },
+      badgeStyles (day, event) {
+        const s = {}
+        // s.left = day.weekday === 0 ? 0 : (day.weekday * this.parsedCellWidth) + '%'
+        // s.top = 0
+        // s.bottom = 0
+        // s.width = (event.days * this.parsedCellWidth) + '%'
+        return s
+      },
       
-      // onToday () {
-      //   this.$refs.calendar.moveToToday()
-      // },
-      // onPrev () {
-      //   this.$refs.calendar.prev()
-      // },
-      // onNext () {
-      //   this.$refs.calendar.next()
-      //   console.log(this.$refs.calendar)
-      // },
-      // onMoved (data) {
-      //   console.log('onMoved', data)
-      // },
-      // onChange (data) {
-      //   console.log('onChange', data)
-      //   this.current_year = new Date(this.selectedDate).getFullYear()
-      // },
-      // onClickDate (data) {
-      //   console.log('onClickDate', data)
-      // },
-      // onClickDay (data) {
-      //   console.log('onClickDay', data)
-      // },
-      // onClickWorkweek (data) {
-      //   console.log('onClickWorkweek', data)
-      // },
-      // onClickHeadDay (data) {
-      //   console.log('onClickHeadDay', data)
-      // },
-      // onClickHeadWorkweek (data) {
-      //   console.log('onClickHeadWorkweek', data)
-      // }
+      onToday () {
+        this.$refs.calendar.moveToToday()
+      },
+      onPrev () {
+        this.$refs.calendar.prev()
+      },
+      onNext () {
+        this.$refs.calendar.next()
+        console.log(this.$refs.calendar)
+      },
+      onMoved (data) {
+        console.log('onMoved', data)
+      },
+      onChange (data) {
+        console.log('onChange', data)
+        this.current_year = new Date(this.selectedDate).getFullYear()
+      },
+      onClickDate (data) {
+        console.log('onClickDate', data)
+      },
+      onClickDay (data) {
+        console.log('onClickDay', data)
+      },
+      onClickWorkweek (data) {
+        console.log('onClickWorkweek', data)
+      },
+      onClickHeadDay (data) {
+        console.log('onClickHeadDay', data)
+      },
+      onClickHeadWorkweek (data) {
+        console.log('onClickHeadWorkweek', data)
+      }
     }
   })
   

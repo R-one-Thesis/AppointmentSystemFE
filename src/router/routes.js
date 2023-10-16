@@ -117,6 +117,13 @@ const routes = [
     roles:["any"]
   },
 
+  {
+    path: '/GetSchedules', 
+    component: () => import('src/components/GetSchedules.vue'),
+    name: 'GetSchedules',
+    roles:["any"]
+  },
+
   // {
   //   path: '/CardBasic', 
   //   component: () => import('components/CardBasic.vue'),

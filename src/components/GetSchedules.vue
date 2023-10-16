@@ -1,12 +1,54 @@
 <template>
-  <div class="add-sched">
-    <q-btn
-      label="Add Schedule (+)"
-      @click="AddSchedule"
-      class="q-mt-md q-mb-md  drawerActive text-white"
-    />
-
-    <q-dialog v-model="formSchedule" persistent transition-show="flip-down" @hide="onHide">
+    <div class="subcontent">
+      <navigation-bar @today="onToday" @prev="onPrev" @next="onNext" />
+  
+      <div class="year-header">
+        2023
+      </div>
+  
+      <div class="calendar-container">
+        <q-calendar-month
+          ref="calendar"
+          v-model="selectedDate"
+          animated
+          bordered
+          focusable
+          hoverable
+          no-active-date
+          :day-min-height="60"
+          :day-height="0"
+          @change="onChange"
+          @moved="onMoved"
+          @click-date="onClickDate"
+          @click-day="onClickDay"
+          @click-workweek="onClickWorkweek"
+          @click-head-workweek="onClickHeadWorkweek"
+          @click-head-day="onClickHeadDay"
+        >
+          <template #day="{ scope: { timestamp } }">
+            <template v-for="event in eventsMap[timestamp.date]" :key="event.id">
+              <div
+                :class="badgeClasses(event, 'day')"
+                :style="badgeStyles(event, 'day')"
+                class="my-event"
+              >
+                <div class="event-title">
+                  {{ event.doctor + (event.time ? ' - ' + event.time : '') }}
+                  <q-tooltip>Duration: {{ event.duration }} minutes</q-tooltip>
+                </div>
+              </div>
+            </template>
+          </template>
+        </q-calendar-month>
+      </div>
+  
+      <div class="add-schedule-section">
+        <q-btn
+          label="Add Schedule (+)"
+          @click="addSchedule"
+          class="add-schedule-button"
+        />
+        <q-dialog v-model="formSchedule" persistent transition-show="flip-down" @hide="onHide">
       <q-card style="width: 650px; max-width: 80vw">
         <q-toolbar>
          
@@ -126,27 +168,87 @@
       
       </q-card>
     </q-dialog>
-  </div>
-</template>
-
+      </div>
+  
+      <!-- <div class="schedules-list">
+        <div v-for="schedule in schedules" :key="schedule.id" class="schedule-item">
+          <div><strong>Doctor:</strong> {{ schedule.dentist_name }}</div>
+          <div><strong>Specialization:</strong> {{ schedule.specialization }}</div>
+          <div><strong>Date:</strong> {{ schedule.date }}</div>
+          <div><strong>Time:</strong> {{ schedule.time_start }}</div>
+          <div><strong>Duration:</strong> {{ schedule.duration }} minutes</div>
+          <div><strong>Status:</strong> {{ schedule.booked === 1 ? 'Booked' : 'Available' }}</div>
+        </div>
+      </div> -->
+    </div>
+  </template>
+  
 <script setup>
-import { ref, computed } from 'vue'
+import {
+  QCalendarMonth,
+  addToDate,
+  parseDate,
+  today
+} from '@quasar/quasar-ui-qcalendar/src/index.js';
 import api from "../pages/commonAPI/";
+import { ref, computed, onMounted, reactive } from 'vue';
 import { exportFile, useQuasar, copyToClipboard } from "quasar";
-import { stringify } from 'postcss';
+import NavigationBar from '../components/NavigationBar.vue';
 const $q = useQuasar();
+
+const formProfile = ref(false);
+const schedules = ref([]);
+const eventsMap = reactive({});
+
+const selectedDate = ref(today());
+
+// Function to fetch schedules
+const fetchSchedules = () => {
+  api.viewAllSched()
+    .then((response) => {
+      schedules.value = response.schedules;
+      
+      // Populate eventsMap using response data
+      response.schedules.forEach((schedule) => {
+        const formattedDate = schedule.date.split(' ')[0];
+        if (!eventsMap[formattedDate]) {
+          eventsMap[formattedDate] = [];
+        }
+        eventsMap[formattedDate].push({
+          id: schedule.id,
+          doctor: schedule.dentist_name,
+          details: schedule.specialization,
+          date: formattedDate,
+          time: schedule.time_start,
+          duration: parseFloat(schedule.duration),
+          bgcolor: schedule.booked === 1 ? 'red' : 'green',
+          icon: 'fas fa-handshake',
+        });
+      });
+      console.log('Schedules successfully fetched:', schedules.value);
+    })
+    .catch((error) => {
+      console.error(error);
+    });
+};
+
+
+onMounted(() => {
+  fetchSchedules(); // Call the fetchSchedules function to fetch schedule data
+});
+
+// Your formInput and related variables
 const formSchedule = ref(false);
 const submitting = ref(false);
-const dateValue = ref('')
+const dateValue = ref('');
 const addTransaction = ref(true);
-const time_start = ref('')
+const time_start = ref('');
 const formInput = ref({
   services: []
 });
 const ph = ref('');
-const loading = ref(false);;
+const loading = ref(false);
 const doctors_id = ref(null);
-// const duration_model = ref(null);
 const duration = ref(null);
 
 const selectedDuration = [
@@ -155,65 +257,106 @@ const selectedDuration = [
   { duration: 90, value: '1 hour and 30 mins' },
 ];
 
-
-
-
 const selectedDurationValue = computed(() => {
-  const selectedOption = selectedDuration.find((option) => option.duration === formInput.duration);
+  const selectedOption = selectedDuration.find((option) => option.duration === formInput.value.duration);
   return selectedOption ? selectedOption.duration : null;
 });
 
-// const group = ref({services: []});
 const services = ref([
   { label: 'Dental Restoration', value: 'dental_restoration' },
   { label: 'Tooth Extraction', value: 'tooth_extract', color: 'green' },
   { label: 'Odontectomy', value: 'odontectomy', color: 'green' },
   { label: 'Dentures', value: 'dentures', color: 'green' },
   { label: 'Root Canal', value: 'root_canal', color: 'green' },
-  { label: 'Bracess', value: 'bracess', color: 'green' },
+  { label: 'Braces', value: 'braces', color: 'green' }, // Fixed the typo here (Bracess to Braces)
   { label: 'Jacket Crown', value: 'jacket_crown', color: 'green' },
   { label: 'Oral Prophylaxis', value: 'oral_prophylaxis', color: 'green' },
   { label: 'Consultation', value: 'consultation', color: 'green' }
 ]);
 
-const rules = ref({
+const rules = {
   requiredField: (v) => !!v || "Required field.",
-  requiredSelection: (v) =>
-    (!!v && v.length > 0) || "Required at least one selection",
-  matchPassword: (v) =>
-    v === form.value.password || "Does not match new password.",
-  properEmail: (v) =>
-    !v ||
-    /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/.test(v) ||
-    "E-mail must be valid. Ex. juandelacruz@gmail.com",
-  mobileNumber: (v) =>
-    !v ||
-    /^(09)\d{9}$/.test(v) ||
-    "Mobile number must be valid. Ex. starts with (09) followed by xxxxxxxxx, where x = numeric character only",
-    requiredSelection: (v) =>
-    (v && v.length > 0) || "Please select at least one service.",
-});
+  requiredSelection: (v) => (!!v && v.length > 0) || "Required at least one selection",
+};
 
 let doctorsOptions = ref([]);
 
-
-const AddSchedule = ()=> {
-  formSchedule.value = true;
-  addTransaction.value = true;
+// Event handling methods
+const badgeClasses = (event, type) => {
+  return {
+    [`text-white bg-${event.bgcolor}`]: true,
+    'rounded-border': true
   };
+};
 
-  const closeDialog = ()=> {
-    formSchedule.value = false;
-  };
+const badgeStyles = (day, event) => {
+  const s = {};
+  return s;
+};
 
-function onToday () {
-      this.$refs.calendar.moveToToday()
-    };
+const onToday = () => {
+  selectedDate.value = today();
+};
 
+const onPrev = () => {
+  selectedDate.value = addToDate(selectedDate.value, { months: -1 });
+};
 
+const onNext = () => {
+  selectedDate.value = addToDate(selectedDate.value, { months: 1 });
+};
 
+const onMoved = (data) => {
+  console.log('onMoved', data);
+};
 
-    const getDoctors = () => {
+const onChange = (data) => {
+  console.log('onChange', data);
+};
+
+const onClickDate = (data) => {
+  console.log('onClickDate', data);
+};
+
+const onClickDay = (data) => {
+  console.log('onClickDay', data);
+};
+
+const onClickWorkweek = (data) => {
+  console.log('onClickWorkweek', data);
+};
+
+const onClickHeadDay = (data) => {
+  console.log('onClickHeadDay', data);
+};
+
+const onClickHeadWorkweek = (data) => {
+  console.log('onClickHeadWorkweek', data);
+};
+
+const openDialog = () => {
+  formProfile.value = true;
+  console.log('test');
+};
+
+const closeDialog = () => {
+  formProfile.value = false;
+};
+
+const addSchedule = () => {
+    formSchedule.value = true;
+    addTransaction.value = true;
+}
+
+const onHide = () => {
+  // Implement the onHide method
+}
+
+const onReset = () => {
+  // Implement the onReset method
+}
+
+const getDoctors = () => {
   api
     .viewDoctor()
     .then((response) => {
@@ -264,9 +407,6 @@ const getSchedule = () => {
     });
 };
 
-
-
-console.log("formInput.services:", formInput.services);
 const onSubmit = (val) => {
   // add
 
@@ -318,20 +458,91 @@ const onSubmit = (val) => {
   } 
 };
 
-
 getDoctors();
 getSchedule();
 </script>
-
-<style scoped>
-.add-sched {
+  
+  
+  <style scoped>
+  
+  .add-sched {
+      display: flex;
+      justify-content: center;
+      padding-top: 50px;
+  }
+  
+  .q-option-group.q-gutter-x-sm {
+      display: flex;
+      flex-wrap: wrap;
+  }
+  .my-event {
+    position: relative;
+    font-size: 12px;
+    width: 100%;
+    margin: 1px 0 0 0;
+    justify-content: center;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    cursor: pointer;
+  }
+  
+  
+  
+  .title {
+    position: relative;
     display: flex;
     justify-content: center;
-    padding-top: 50px;
-}
-
-.q-option-group.q-gutter-x-sm {
-    display: flex;
-    flex-wrap: wrap;
-}
-</style>
+    align-items: center;
+    height: 100%;
+  }
+   
+  
+  .text-white {
+    color: white;
+  
+  }
+  
+  .bg-blue {
+    background: blue;
+  
+  }
+  
+  .bg-green {
+    background: green;
+  
+  }
+  
+  .bg-orange {
+    background: orange;
+  
+  }
+  
+    .bg-red {
+        background: red;
+  
+    }
+  
+  .bg-teal {
+    background: teal;
+  
+  }
+  
+  .bg-grey {
+  
+    background: grey;
+  }
+  
+  .bg-purple {
+    background: purple;
+  
+  }
+  
+  .rounded-border {
+    border-radius: 2px;
+  
+  }
+  
+  .subcontent .q-pa-md {
+    height: auto !important;
+  }
+  </style>
