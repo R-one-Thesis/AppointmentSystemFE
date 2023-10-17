@@ -3,7 +3,8 @@
       <navigation-bar @today="onToday" @prev="onPrev" @next="onNext" />
   
       <div class="year-header">
-        2023
+        <!-- 2023 -->
+        {{ new Date(selectedDate).getFullYear() }}
       </div>
   
       <div class="calendar-container">
@@ -24,6 +25,7 @@
           @click-workweek="onClickWorkweek"
           @click-head-workweek="onClickHeadWorkweek"
           @click-head-day="onClickHeadDay"
+          :loading="loading"
         >
           <template #day="{ scope: { timestamp } }">
             <template v-for="event in eventsMap[timestamp.date]" :key="event.id">
@@ -31,6 +33,7 @@
                 :class="badgeClasses(event, 'day')"
                 :style="badgeStyles(event, 'day')"
                 class="my-event"
+                @click="openScheduleDialog(event)"
               >
                 <div class="event-title">
                   {{ event.doctor + (event.time ? ' - ' + event.time : '') }}
@@ -162,6 +165,7 @@
                 style="float: right;"
               />
             </div>
+            
           </q-form>
           
         </q-card-section>
@@ -169,18 +173,28 @@
       </q-card>
     </q-dialog>
       </div>
-  
-      <!-- <div class="schedules-list">
-        <div v-for="schedule in schedules" :key="schedule.id" class="schedule-item">
-          <div><strong>Doctor:</strong> {{ schedule.dentist_name }}</div>
-          <div><strong>Specialization:</strong> {{ schedule.specialization }}</div>
-          <div><strong>Date:</strong> {{ schedule.date }}</div>
-          <div><strong>Time:</strong> {{ schedule.time_start }}</div>
-          <div><strong>Duration:</strong> {{ schedule.duration }} minutes</div>
-          <div><strong>Status:</strong> {{ schedule.booked === 1 ? 'Booked' : 'Available' }}</div>
-        </div>
-      </div> -->
+      <q-dialog v-model="viewSchedule" persistent transition-show="flip-down" @hide="onHide">
+        <q-card style="width: 650px; max-width: 80vw">
+          <q-toolbar>
+            <q-toolbar-title><span class="text-weight-bold">Schedule Details</span></q-toolbar-title>
+            <q-btn flat round dense icon="close" v-close-popup />
+          </q-toolbar>
+          <q-card-section>
+            <!-- Display schedule details in the dialog -->
+            <div v-if="scheduleDialogData">
+              <div><strong>Doctor:</strong> {{ scheduleDialogData.doctor }}</div>
+              <div><strong>Specialization:</strong> {{ scheduleDialogData.details }}</div>
+              <div><strong>Date:</strong> {{ scheduleDialogData.date }}</div>
+              <div><strong>Time:</strong> {{ scheduleDialogData.time }}</div>
+              <div><strong>Duration:</strong> {{ scheduleDialogData.duration }} minutes</div>
+              <div><strong>Status:</strong> {{ scheduleDialogData.booked === 0 ? 'Available' : 'Already booked' }}</div>
+
+            </div>
+          </q-card-section>
+        </q-card>
+      </q-dialog>
     </div>
+    
   </template>
   
 <script setup>
@@ -198,32 +212,41 @@ const $q = useQuasar();
 
 const formProfile = ref(false);
 const schedules = ref([]);
-const eventsMap = reactive({});
+const eventsMap = ref([]);
 
-const selectedDate = ref(today());
+
+const convertTo12HourFormat = (time24) => {
+  const [hour, minute] = time24.split(':');
+  const hours = parseInt(hour, 10);
+  const ampm = hours >= 12 ? 'PM' : 'AM';
+  const formattedHour = hours % 12 === 0 ? 12 : hours % 12;
+  return `${formattedHour}:${minute} ${ampm}`;
+};
 
 // Function to fetch schedules
 const fetchSchedules = () => {
   api.viewAllSched()
     .then((response) => {
       schedules.value = response.schedules;
-      
+      eventsMap.value = [];
       // Populate eventsMap using response data
       response.schedules.forEach((schedule) => {
-        const formattedDate = schedule.date.split(' ')[0];
-        if (!eventsMap[formattedDate]) {
-          eventsMap[formattedDate] = [];
+        console.log(schedule.date);
+        if (!eventsMap.value[schedule.date]) {
+          eventsMap.value[schedule.date] = [];
         }
-        eventsMap[formattedDate].push({
+        eventsMap.value[schedule.date].push({
           id: schedule.id,
           doctor: schedule.dentist_name,
           details: schedule.specialization,
-          date: formattedDate,
-          time: schedule.time_start,
+          date: schedule.date,
+          time: convertTo12HourFormat(schedule.time_start),
           duration: parseFloat(schedule.duration),
           bgcolor: schedule.booked === 1 ? 'red' : 'green',
           icon: 'fas fa-handshake',
+          booked: schedule.booked, // Add booked property
         });
+        // console.log(eventsMap[schedule.date]);
       });
       console.log('Schedules successfully fetched:', schedules.value);
     })
@@ -233,12 +256,11 @@ const fetchSchedules = () => {
 };
 
 
-onMounted(() => {
-  fetchSchedules(); // Call the fetchSchedules function to fetch schedule data
-});
+
 
 // Your formInput and related variables
 const formSchedule = ref(false);
+const viewSchedule = ref(false);
 const submitting = ref(false);
 const dateValue = ref('');
 const addTransaction = ref(true);
@@ -250,6 +272,9 @@ const ph = ref('');
 const loading = ref(false);
 const doctors_id = ref(null);
 const duration = ref(null);
+const scheduleDialogData = ref(null);
+const selectedDate = ref(today());
+
 
 const selectedDuration = [
   { duration: 30, value: '30 mins' },
@@ -279,6 +304,17 @@ const rules = {
   requiredSelection: (v) => (!!v && v.length > 0) || "Required at least one selection",
 };
 
+
+const openScheduleDialog = (schedule) => {
+  scheduleDialogData.value = schedule;
+  viewSchedule.value = true;
+};
+
+const closeScheduleDialog = () => {
+  scheduleDialogData.value = null;
+  viewSchedule.value = false;
+};
+
 let doctorsOptions = ref([]);
 
 // Event handling methods
@@ -299,12 +335,51 @@ const onToday = () => {
 };
 
 const onPrev = () => {
-  selectedDate.value = addToDate(selectedDate.value, { months: -1 });
+  prevMonth();
 };
 
 const onNext = () => {
-  selectedDate.value = addToDate(selectedDate.value, { months: 1 });
+  // selectedDate.value = addToDate(selectedDate.value, { months: 1 });
+  // console.log(new Date(today()).getMonth());
+  // selectedDate.value.setMonth(new Date(today()).getMonth() + 1);
+  nextMonth();
+ 
 };
+
+const nextMonth = () => {
+  const year = new Date(selectedDate.value).getFullYear().toString(); // Get the last 2 digits of the year
+  const month = ((new Date(selectedDate.value).getMonth() + 1) + 1).toString().padStart(2, '0'); // Month is zero-based, so add 1
+  const day = new Date(selectedDate.value).getDate().toString().padStart(2, '0');
+  console.log(month);
+  if(month === '13') {
+    // const day = new Date(selectedDate.value).getDate().toString().padStart(2, '0');
+    const year = (new Date(selectedDate.value).getFullYear() + 1).toString();
+    console.log('tetete');
+    selectedDate.value = `${year}-01-${day}`;
+    return;
+  }
+  selectedDate.value = `${year}-${month}-${day}`;
+  
+  
+}
+
+const prevMonth = () => {
+  const year = new Date(selectedDate.value).getFullYear().toString(); // Get the last 2 digits of the year
+  const month = ((new Date(selectedDate.value).getMonth() + 1) - 1).toString().padStart(2, '0'); // Month is zero-based, so add 1
+  const day = new Date(selectedDate.value).getDate().toString().padStart(2, '0');
+  console.log(month);
+  if(month === '00') {
+    // const day = new Date(selectedDate.value).getDate().toString().padStart(2, '0');
+    const year = (new Date(selectedDate.value).getFullYear() - 1).toString();
+    console.log('tetete');
+    selectedDate.value = `${year}-12-${day}`;
+    return;
+  }
+  selectedDate.value = `${year}-${month}-${day}`;
+  
+  
+}
+
 
 const onMoved = (data) => {
   console.log('onMoved', data);
@@ -385,27 +460,27 @@ const getDoctors = () => {
     });
 };
 
-const getSchedule = () => {
-  api
-    .viewAllSched()
-    .then((response) => {
-      console.log(response);
-      viewSched.value = response.schedules;
+// const getSchedule = () => {
+//   api
+//     .viewAllSched()
+//     .then((response) => {
+//       console.log(response);
+//       viewSched.value = response.schedules;
 
-      loading.value = false;
-    })
-    .catch((error) => {
-      // console.log(error);
-      loading.value = false;
-      $q.notify({
-        color: "negative",
-        position: "top",
-        message: "Failed to load Schedules",
-        icon: "report_problem",
-      });
-      loading.value = false;
-    });
-};
+//       loading.value = false;
+//     })
+//     .catch((error) => {
+//       // console.log(error);
+//       loading.value = false;
+//       $q.notify({
+//         color: "negative",
+//         position: "top",
+//         message: "Failed to load Schedules",
+//         icon: "report_problem",
+//       });
+//       loading.value = false;
+//     });
+// };
 
 const onSubmit = (val) => {
   // add
@@ -441,9 +516,10 @@ const onSubmit = (val) => {
             icon: "cloud_done",
             message: "New Schedule has been saved!",
           });
+          fetchSchedules();
+          onReset();
           submitting.value = false;
           formSchedule.value = false;
-          onReset();
         }
       })
       .catch((error) => {
@@ -459,7 +535,8 @@ const onSubmit = (val) => {
 };
 
 getDoctors();
-getSchedule();
+fetchSchedules();
+// getSchedule();
 </script>
   
   
