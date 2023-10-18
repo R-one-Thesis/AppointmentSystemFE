@@ -9,7 +9,7 @@
       gap: 10px;
     "
   >
-    <q-item-label> {{ userProfile.business_name ?? userProfile.first_name }} </q-item-label>
+    <!-- <q-item-label> {{ userProfile.business_name ?? userProfile.first_name }} </q-item-label> -->
 
     <q-btn class="text-color1" round>
       <q-avatar size="40px">
@@ -27,10 +27,10 @@
             </q-item-section>
 
             <q-item-section>
-              <q-item-label> {{ userProfile.first_name }}</q-item-label>
+              <!-- <q-item-label> {{ userProfile.first_name }}</q-item-label>
               <q-item-label caption lines="1">
                 {{ userProfile.email }}</q-item-label
-              >
+              > -->
             </q-item-section>
           </q-item>
           <q-separator></q-separator>
@@ -74,31 +74,31 @@ import { api } from "../boot/axios"; // Import the 'api' instance instead of 'ax
 const authInstance = auth();
 const $q = useQuasar();
 const router = useRouter();
-const userProfile = ref({});
-const userId = ref(authInstance.authUser.id);
-const userDetails = ref(authInstance.authUser);
+// const userProfile = ref({});
+// const userId = ref(authInstance.authUser.id);
+// const userDetails = ref(authInstance.authUser);
 const loggingOut = ref(false);
 
-const getUserDetails = async () => {
-  if (userId) {
-    // Fetch user details from local storage using the user ID
-    const userDetails = await api.get("api/users/" + userId.value);
-    // console.log(userDetails);
-    if (userDetails.status == "200") {
-      userProfile.value = userDetails.data.user;
-    } else {
-      $q.notify({
-        color: "negative",
-        position: "top",
-        message: "System encountered an error",
-        icon: "report_problem",
-      });
+// const getUserDetails = async () => {
+//   if (userId) {
+//     // Fetch user details from local storage using the user ID
+//     const userDetails = await api.get("api/users/" + userId.value);
+//     // console.log(userDetails);
+//     if (userDetails.status == "200") {
+//       userProfile.value = userDetails.data.user;
+//     } else {
+//       $q.notify({
+//         color: "negative",
+//         position: "top",
+//         message: "System encountered an error",
+//         icon: "report_problem",
+//       });
 
-      logout();
-    }
-  }
-};
-getUserDetails();
+//       logout();
+//     }
+//   }
+// };
+// getUserDetails();
 
 const logout = () => {
   

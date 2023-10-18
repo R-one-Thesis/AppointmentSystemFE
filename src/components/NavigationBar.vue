@@ -3,15 +3,7 @@
       <div class="q-pa-md q-gutter-sm row">
         <q-btn
           no-caps
-          class="button"
-          style="margin: 2px;"
-          @click="$emit('today')"
-        >
-          Today
-        </q-btn>
-        <q-btn
-          no-caps
-          class="button"
+          class="button q-mt-md q-mb-md drawerActive text-white"
           style="margin: 2px;"
           @click="$emit('prev')"
         >
@@ -19,7 +11,15 @@
         </q-btn>
         <q-btn
           no-caps
-          class="button"
+          class="button q-mt-md q-mb-md drawerActive text-white"
+          style="margin: 2px;"
+          @click="$emit('today')"
+        >
+          Today
+        </q-btn>
+        <q-btn
+          no-caps
+          class="button q-mt-md q-mb-md drawerActive text-white"
           style="margin: 2px;"
           @click="$emit('next')"
         >

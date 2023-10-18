@@ -2,9 +2,8 @@
     <div class="subcontent">
       <navigation-bar @today="onToday" @prev="onPrev" @next="onNext" />
   
-      <div class="year-header">
-        <!-- 2023 -->
-        {{ new Date(selectedDate).getFullYear() }}
+      <div class="year-header text-center">
+        <h4>{{ ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'][new Date(selectedDate).getMonth()] }} {{ new Date(selectedDate).getFullYear() }}</h4>
       </div>
   
       <div class="calendar-container">
@@ -45,11 +44,11 @@
         </q-calendar-month>
       </div>
   
-      <div class="add-schedule-section">
+      <div class="add-schedule-section add-sched">
         <q-btn
           label="Add Schedule (+)"
           @click="addSchedule"
-          class="add-schedule-button"
+          class="q-mt-md q-mb-md drawerActive text-white"
         />
         <q-dialog v-model="formSchedule" persistent transition-show="flip-down" @hide="onHide">
       <q-card style="width: 650px; max-width: 80vw">
@@ -99,7 +98,6 @@
                 dense
               />
 
-                {{ formInput }}
 
                 </div>
                 <label for=""><b>Select Date:</b></label>
@@ -184,6 +182,7 @@
             <div v-if="scheduleDialogData">
               <div><strong>Doctor:</strong> {{ scheduleDialogData.doctor }}</div>
               <div><strong>Specialization:</strong> {{ scheduleDialogData.details }}</div>
+              <div><strong>Services:</strong> {{ scheduleDialogData.services }}</div>
               <div><strong>Date:</strong> {{ scheduleDialogData.date }}</div>
               <div><strong>Time:</strong> {{ scheduleDialogData.time }}</div>
               <div><strong>Duration:</strong> {{ scheduleDialogData.duration }} minutes</div>
@@ -239,6 +238,7 @@ const fetchSchedules = () => {
           id: schedule.id,
           doctor: schedule.dentist_name,
           details: schedule.specialization,
+          services: schedule.services,
           date: schedule.date,
           time: convertTo12HourFormat(schedule.time_start),
           duration: parseFloat(schedule.duration),
@@ -339,9 +339,7 @@ const onPrev = () => {
 };
 
 const onNext = () => {
-  // selectedDate.value = addToDate(selectedDate.value, { months: 1 });
-  // console.log(new Date(today()).getMonth());
-  // selectedDate.value.setMonth(new Date(today()).getMonth() + 1);
+ 
   nextMonth();
  
 };
@@ -546,6 +544,10 @@ fetchSchedules();
       display: flex;
       justify-content: center;
       padding-top: 50px;
+  }
+
+  .year-header h4 {
+    margin: 10px 0 !important;
   }
   
   .q-option-group.q-gutter-x-sm {

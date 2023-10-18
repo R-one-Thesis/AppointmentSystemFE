@@ -7,22 +7,22 @@ const routes = [
       requiresAuth: true, // Set requiresAuth: true on the parent route
     },
     children: [
-      // {
-      //   path: '/Dashboard', 
-      //   component: () => import('pages/IndexPage.vue'),
-      //   name: 'Dashboard',
-      //   meta: { icon: 'dashboard', roles: ['any'] }
-      // },
+      {
+        path: '/Dashboard', 
+        component: () => import('pages/IndexPage.vue'),
+        name: 'Dashboard',
+        meta: { icon: 'dashboard', roles: ['any'] }
+      },
 
       {
         path: '/',
-        meta: { label: 'Clients', icon: 'group', roles: ['any'] }, // Group label and icon
+        meta: { label: 'Patients', icon: 'group', roles: ['any'] }, // Group label and icon
         children: [
           {
-            path: '/Pre-Registration-Management', 
-            component: () => import('pages/PreRegistration/PreRegistration.vue'),
-            name: 'Pre Registration',
-            meta: { icon: 'fas fa-user', roles: ['ADMIN', 'CASHIER'] }
+            path: '/Patients', 
+            component: () => import('pages/Patients/Patients.vue'),
+            name: 'Patients',
+            meta: { icon: 'fas fa-user', roles: ['any'] }
           },
         
           
@@ -88,12 +88,12 @@ const routes = [
     roles:["any"]
   },
 
-  {
-    path: '/Dashboard', 
-    component: () => import('pages/IndexPage.vue'),
-    name: 'Dashboard',
-    meta: { icon: 'dashboard', roles: ['any'] }
-  },
+  // {
+  //   path: '/Dashboard', 
+  //   component: () => import('pages/IndexPage.vue'),
+  //   name: 'Dashboard',
+  //   meta: { icon: 'dashboard', roles: ['any'] }
+  // },
 
 
   {
