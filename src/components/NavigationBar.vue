@@ -7,7 +7,7 @@
           style="margin: 2px;"
           @click="$emit('prev')"
         >
-          &lt; Prev
+          &lt;
         </q-btn>
         <q-btn
           no-caps
@@ -23,7 +23,7 @@
           style="margin: 2px;"
           @click="$emit('next')"
         >
-          Next &gt;
+          &gt;
         </q-btn>
       </div>
     </div>

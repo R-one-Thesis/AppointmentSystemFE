@@ -3,7 +3,7 @@
       <q-btn
         label="Add Patient (+)"
         @click="AddPatient"
-        class="q-mt-md q-mb-md bg-button1 text-white"
+        class="q-mt-md q-mb-md bg-button1 text-white drawerActive"
       />
   
       <q-dialog
@@ -30,7 +30,7 @@
             <q-form @submit="onSubmit" @reset="onReset" class="q-gutter-sd">
               <div class="q-gutter-md q-col-gutter-md">
                 <div class="row q-col-gutter-md">
-                  <div class="q-col col-12 col-sm-12 col-md-4">
+                  <div class="q-col col-12 col-sm-12 col-md-3">
                     <q-input
                       class="custom-input"
                       outlined
@@ -43,7 +43,7 @@
                     />
                   </div>
   
-                  <div class="q-col col-12 col-sm-6 col-md-4">
+                  <div class="q-col col-12 col-sm-6 col-md-3">
                     <q-input
                       class="custom-input"
                       outlined
@@ -53,7 +53,7 @@
                     />
                   </div>
   
-                  <div class="q-col col-12 col-sm-6 col-md-4">
+                  <div class="q-col col-12 col-sm-6 col-md-3">
                     <q-input
                       class="custom-input"
                       outlined
@@ -64,13 +64,26 @@
                       :rules="[rules.requiredField]"
                     />
                   </div>
-                  <div class="q-col col-12 col-sm-6 col-md-8">
+                  <div class="q-col col-12 col-sm-6 col-md-3">
+                    <q-select
+                      class="custom-input-select col-5"
+                      outlined
+                      v-model="formInput.extension_name"
+                      :options="selectExtenstion"
+                      map-options
+                      option-value="extension_name"
+                      option-label="value"
+                      label="Extension Name"
+                      dense
+                    />
+                  </div>
+                  <div class="q-col col-12 col-sm-6 col-md-4">
                     <q-input
                       class="custom-input"
                       outlined
                       dense
                       stack-label
-                      v-model="formInput.address"
+                      v-model="formInput.home_address"
                       label="Address"
                       lazy-rules
                       :rules="[rules.requiredField]"
@@ -88,6 +101,30 @@
                       :rules="[rules.requiredField, rules.properEmail]"
                     />
                   </div>
+                  <div class="q-col col-12 col-sm-6 col-md-4">
+             
+
+                    <q-input
+                    class="custom-input"
+                    outlined
+                    stack-label
+                      dense
+                      label="Password"
+                      v-model="formInput.password"
+                      :type="isPwd ? 'password' : 'text'"
+                      :rules="[rules.requiredField]"
+                      v-if="addTransaction"
+                    >
+                    
+                      <template v-slot:append>
+                        <q-icon
+                          :name="isPwd ? 'visibility_off' : 'visibility'"
+                          class="cursor-pointer"
+                          @click="isPwd = !isPwd"
+                        ></q-icon>
+                      </template>
+                    </q-input>
+                  </div>
   
                   <div class="q-col col-12 col-sm-6 col-md-4">
                     <q-input
@@ -95,7 +132,7 @@
                       outlined
                       dense
                       stack-label
-                      v-model="formInput.phone_number"
+                      v-model="formInput.mobile_number"
                       label="Phone Number"
                       lazy-rules
                       :rules="[rules.requiredField, rules.mobileNumber]"
@@ -111,7 +148,7 @@
                       type="date"
                       option-value="date"
                       stack-label
-                      v-model="formInput.date"
+                      v-model="formInput.birthday"
                       label="Birthday"
                       lazy-rules
                       :rules="[rules.requiredField]"
@@ -131,7 +168,8 @@
                     />
                   </div>
                   
-  
+                  {{ formInput }}
+                  
                 
                 </div>
               </div>
@@ -202,15 +240,7 @@
             <!-- Add any other elements or styling as needed between the title and dropdown -->
           </div>
         </template>
-        <template v-slot:body-cell-active="props">
-          <q-td key="status" :props="props">
-            <div class="cell-content">
-              <q-badge :color="props.row.active == 1 ? 'green' : 'red'">
-                {{ props.row.active == 1 ? "true" : "false" }}
-              </q-badge>
-            </div>
-          </q-td>
-        </template>
+   
         <template v-slot:body-cell-actions="props">
           <q-td :props="props">
             <q-btn
@@ -301,11 +331,12 @@
 import { ref, watch, computed } from "vue";
 import { exportFile, useQuasar } from "quasar";
 import { auth } from "../../stores/auth";
-// import api from "./API";
+import api from "./API";
 const formProfile = ref(false);
 const addTransaction = ref(true);
+const $q = useQuasar();
 const formInput = ref({});
-
+const submitting = ref(false);
 const rules = ref({
   requiredField: (v) => !!v || "Required field.",
   requiredSelection: (v) =>
@@ -322,9 +353,65 @@ const rules = ref({
     "Mobile number must be valid. Ex. starts with (09) followed by xxxxxxxxx, where x = numeric character only",
 });
 
+const selectExtenstion = [
+   'Jr', 'Sr', 'III', 'IV'
+];
+
 const AddPatient = () => {
   formProfile.value = true;
   addTransaction.value = true;
-  formInput.value.active = false;
 };
+
+const onReset = () => {
+  formInput.value = {}
+  // loadData();
+};
+
+const onSubmit = (val) => {
+  // add
+
+  if (addTransaction.value) {
+    console.log(formInput);
+    submitting.value = true;
+    api
+    .addPatient(formInput.value)
+      .then((response) => {
+        console.log(response);
+        if (response.data?.error || response.data?.message) {
+          $q.notify({
+            color: "negative",
+            position: "top",
+            message:
+              JSON.stringify(response.data?.error) ??
+              JSON.stringify(response.data?.message) ??
+              "Failed to Add Patient",
+            icon: "report_problem",
+          });
+          submitting.value = false;
+        } else {
+          $q.notify({
+            color: "green-4",
+            textColor: "white",
+            icon: "cloud_done",
+            message: "New Patient has been saved!",
+          });
+          onReset();
+          submitting.value = false;
+          formSchedule.value = false;
+        }
+      })
+      .catch((error) => {
+        $q.notify({
+          color: "negative",
+          position: "top",
+          message: error.message ?? "Failed to add Patient",
+          icon: "report_problem",
+        });
+        submitting.value = false;
+      });
+  } 
+};
+
+
+
 </script>

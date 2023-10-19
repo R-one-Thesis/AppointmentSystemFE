@@ -81,19 +81,20 @@ const routes = [
      
     ]
   },
+
+  {
+    path: '/LandingPage', 
+    component: () => import('components/LandingPage.vue'),
+    name: 'LandingPage',
+    roles:["any"]
+  },
+
   {
     path: '/Login', 
     component: () => import('pages/Login/Login.vue'),
     name: 'Login',
     roles:["any"]
   },
-
-  // {
-  //   path: '/Dashboard', 
-  //   component: () => import('pages/IndexPage.vue'),
-  //   name: 'Dashboard',
-  //   meta: { icon: 'dashboard', roles: ['any'] }
-  // },
 
 
   {
@@ -124,15 +125,7 @@ const routes = [
     roles:["any"]
   },
 
-  // {
-  //   path: '/CardBasic', 
-  //   component: () => import('components/CardBasic.vue'),
-  //   name: 'CardBasic',
-  //   roles:["any"]
-  // },
-
-  // Always leave this as last one,
-  // but you can also remove it
+ 
   {
     path: '/:catchAll(.*)*',
     component: () => import('pages/ErrorNotFound.vue')
