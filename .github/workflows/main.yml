@@ -1,0 +1,40 @@
+name: Deploy Quasar App to Hostinger
+on:
+  push:
+    branches:
+      - development # Adjust the branch name as needed
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: Create .env file from .env.development
+        run: cp .env.development .env
+      - name: Set up Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: 18.16.1
+
+      - name: Install Quasar CLI
+        run: npm install -g @quasar/cli
+
+      - name: Build Quasar app
+        run: |
+          npm install --legacy-peer-deps
+          quasar build
+  
+
+      - name: Update known_hosts
+        run: |
+          mkdir -p ~/.ssh
+          ssh-keyscan -p 65002 151.106.124.122 >> ~/.ssh/known_hosts
+          
+      - name: Create remote directory (if not exists)
+        run: |
+          sshpass -p '${{ secrets.SSH_PASS }}' ssh -p 65002 u102654923@151.106.124.122 "mkdir -p /home/u102654923/domains/ronewebsolutions.com/public_html/appointment-fe"
+
+      - name: Deploy to Hostinger
+        run: sshpass -p '${{ secrets.SSH_PASS }}' rsync -avz -e "ssh -p 65002" dist/spa/ u102654923@151.106.124.122:/home/u102654923/domains/ronewebsolutions.com/public_html/appointment-fe

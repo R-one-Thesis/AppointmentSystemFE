@@ -18,7 +18,7 @@ body  {
 }
 
 .custom-btn {
-  border-radius: 30px !important;
+  border-radius: 0!important;
 }
 .q-layout.q-layout--standard.darkModeClass span {
   color: white !important;
@@ -51,9 +51,7 @@ body  {
   color: white !important;
   background-color: var(--q-dark) !important;
 }
-.qr-stream-overlay {
-  background: url("src/assets/qr-overlay.png") !important;
-}
+
 .dark-mode .q-btn--standard {
   color: black !important;
 }
@@ -79,12 +77,12 @@ body  {
 .drawerClass {
   background-color: white;
   width: 250px;
-  border-radius: 30px;
+  border-radius: 0;
   border: solid var(--q-primary) 2px;
 }
 .drawerActive {
   background-color: var(--q-primary) !important;
-  border-radius: 30px;
+  border-radius: 0;
 }
 
 .login-container .q-field__control {

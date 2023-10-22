@@ -75,13 +75,24 @@
               <q-btn
                 label="Book now"
                 class="q-mt-md q-mb-md drawerActive text-white"
-                @click="addSchedule"
+                @click="bookNow"
               />
             </div>
             </div>
           </q-card-section>
         </q-card>
       </q-dialog>
+      <q-dialog v-model="bookSched">
+      <q-card>
+        <q-card-section>
+          <p>Do you already have an account?</p>
+        </q-card-section>
+        <q-card-actions  class="row justify-center">
+          <q-btn label="Yes, Login" color="positive" href="#/Login" />
+          <q-btn label="No, Register" color="accent" href="#/Register" />
+        </q-card-actions>
+      </q-card>
+    </q-dialog>
     </div>
     
   </template>
@@ -102,7 +113,7 @@
   const formProfile = ref(false);
   const schedules = ref([]);
   const eventsMap = ref([]);
-  
+  const bookSched = ref(false);
   
   const convertTo12HourFormat = (time24) => {
   const [hour, minute] = time24.split(':');
@@ -145,11 +156,14 @@
     });
   };
   
+
+const bookNow = () => {
+    bookSched.value = true;
+}
   
   
   
   // Your formInput and related variables
-  const formSchedule = ref(false);
   const viewSchedule = ref(false);
   const submitting = ref(false);
   const dateValue = ref('');
