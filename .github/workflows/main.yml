@@ -24,6 +24,7 @@ jobs:
       - name: Build Quasar app
         run: |
           npm install
+          npm audit fix --force
           quasar build
   
 
