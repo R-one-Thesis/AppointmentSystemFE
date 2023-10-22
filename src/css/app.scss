@@ -18,7 +18,7 @@ body  {
 }
 
 .custom-btn {
-  border-radius: 30px !important;
+  border-radius: 0!important;
 }
 .q-layout.q-layout--standard.darkModeClass span {
   color: white !important;
@@ -79,12 +79,12 @@ body  {
 .drawerClass {
   background-color: white;
   width: 250px;
-  border-radius: 30px;
+  border-radius: 0;
   border: solid var(--q-primary) 2px;
 }
 .drawerActive {
   background-color: var(--q-primary) !important;
-  border-radius: 30px;
+  border-radius: 0;
 }
 
 .login-container .q-field__control {

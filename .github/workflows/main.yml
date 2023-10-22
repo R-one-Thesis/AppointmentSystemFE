@@ -23,8 +23,7 @@ jobs:
 
       - name: Build Quasar app
         run: |
-          npm install
-          npm audit fix --force
+          npm install --legacy-peer-deps
           quasar build
   
 

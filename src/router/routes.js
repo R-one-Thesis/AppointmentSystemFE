@@ -65,6 +65,13 @@ const routes = [
     roles:["any"]
   },
 
+  {
+    path: '/Register', 
+    component: () => import('pages/Register/Register.vue'),
+    name: 'Register',
+    roles:["any"]
+  },
+
 
   
 
