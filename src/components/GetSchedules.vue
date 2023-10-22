@@ -15,7 +15,6 @@
           focusable
           hoverable
           no-active-date
-          :disabled-weekdays="[0,6]"
           :day-min-height="60"
           :day-height="0"
           @change="onChange"
@@ -66,19 +65,23 @@
           <q-form @submit="onSubmit" @reset="onReset" class="q-gutter-sd">
             <div class="q-gutter-md q-col-gutter-md">
               <div class="row q-col-gutter-md">
-               
-                <div class="q-col col-12 col-sm-6 col-md-12">
-                  <q-select
-                    class="custom-input-select col-5"
-                    outlined
-                    v-model="formInput.doctors_id"
-                    :options="doctorsOptions"
-                    option-value="doctors_id"
-                    option-label="dentist"
-                    label="Select Doctor"
-                    dense
-                    :rules="[rules.requiredField]"
-                  />
+                <div
+                  class="q-col col-12 col-sm-12 col-md-12"
+                 
+                >
+                <q-select
+                  class="custom-select"
+                  v-model="formInput.doctors_id"
+                  :options="doctorsOptions"
+                  option-value="doctors_id"
+                  option-label="dentist"
+                  label="Select Doctor"
+                  :rules="[rules.requiredField]"
+                  dense
+                />
+          
+             
+                
                 </div>
                 <q-label><b>Select Service:</b></q-label>
                 <div
@@ -97,75 +100,68 @@
 
 
                 </div>
-              
+                <label for=""><b>Select Date:</b></label>
+
+                <div
+                  class="q-col col-12 col-sm-6 col-md-4">
+                  <input
+                      class="custom-input"
+                      type="date"
+                      option-value="date"
+                      v-model="formInput.date"
+                      :placeholder="ph"
+                      :rules="[rules.requiredField]"
+                      dense
+                    />
+                </div>
                 
-                <div class="q-col col-12 col-sm-6 col-md-6">
-                   
 
-                   <q-input
-                     class="custom-input"
-                     outlined
-                     dense
-                     type="date"
-                    option-value="date"
-                    v-model="formInput.date"
+                <label for=""><b>Select Time:</b></label>
+                <div
+                  class="q-col col-12 col-sm-6 col-md-4"
+                 
+                >
+                <input
+                    class="custom-input"
+                    type="time"
+                    v-model="formInput.time_start"
                     :placeholder="ph"
-                     label="Select Date"
-                     lazy-rules
-                     :rules="[rules.requiredField]"
-                   />
-
-                 </div>
-
-                 <div class="q-col col-12 col-sm-6 col-md-6">
-                   
-
-                   <q-input
-                     class="custom-input"
-                     outlined
-                     dense
-                     type="time"
-                     v-model="formInput.time_start"
-                    :placeholder="ph"
-                     label="Select Time"
-                     lazy-rules
-                     :rules="[rules.requiredField]"
-                   />
-
-                 </div>
-
-                
-              <div class="q-col col-12 col-sm-6 col-md-12">
-                  <q-select
-                    class="custom-input-select col-5"
-                    outlined
-                    v-model="formInput.duration"
-                    :options="selectedDuration"
-                    map-options
-                    option-value="duration"
-                    option-label="value"
-                    label="Select Duration"
-                    dense
                     :rules="[rules.requiredField]"
+                    dense
                   />
                 </div>
+                <!-- <label for=""><b>Select Time Duration:</b></label> -->
+                <div
+                  class="q-col col-12 col-sm-4 col-md-12"
+                  
+                >
+                <q-select
+                  class="custom-select"
+                  v-model="formInput.duration"
+                  :options="selectedDuration"
+                  map-options
+                  option-value="duration"
+                  option-label="value"
+                  label="Select Duration"
+                  :rules="[rules.requiredField]"
+                  dense
+                  style="display: flex !important;"
+                />
+           
+
+              
+              </div>
               </div>
             </div>
-       
-
-            <div class="row justify-end">
-                <div>
-                  <q-btn
-                    :loading="submitting"
-                    label="Add"
-                    type="submit"
-                    class="drawerActive"
-                  >
-                    <template v-slot:loading>
-                      <q-spinner-facebook />
-                    </template>
-                  </q-btn>
-                </div>
+            <div style="margin: 10px;">
+              <q-btn
+              :loading="submitting"
+                color="positive"
+                class="add-btn"
+                type="submit"
+                label="Add"
+                style="float: right;"
+              />
             </div>
             
           </q-form>

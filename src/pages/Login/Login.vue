@@ -29,6 +29,10 @@
                                     </q-input>
                                     <q-btn class="full-width no-caps q-pa-sm custom-btn" color="primary" label="Sign in" rounded
                                         @click="login" :loading="loading"></q-btn>
+                                    <div class="text-center row justify-between">
+                                        <a href="/">Back to home</a>
+                                        <a href="">Dont have account?</a>
+                                    </div>
                                 </q-form>
                             </q-card-section>
                         </div>

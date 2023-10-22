@@ -45,7 +45,7 @@ export default route(function ({ store }) {
       if (to.path === '/Login') {
         // If the user is already authenticated, redirect to dashboard (assuming '/' is the dashboard)
         if (token) {
-          next('/');
+          next('/Dashboard');
         } else {
           // If the user is not authenticated, allow access to the login page
           next();

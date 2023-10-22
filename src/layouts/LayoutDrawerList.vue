@@ -1,7 +1,7 @@
 <template>
   
   <div v-for="item in routes" :key="item.name">
-  <q-list v-if="(item.children!=null) && (item.meta.roles.some((x) => roles.includes(x)) || item.meta.roles.includes('any'))" expand-icon-class="text-white">
+  <q-list v-if="(item.children!=null) " expand-icon-class="text-white">
     
     <q-item>
       <q-item-section avatar>
@@ -19,7 +19,7 @@
    
   </q-list>
   <q-list style="display:flex; justify-content: center;" v-else>
-    <q-item v-if="item.meta.roles.some((x) => roles.includes(x)) || item.meta.roles.includes('any')" :to="item.path" class="drawerClass text-bold" active-class="q-item-no-link-highlighting drawerActive" style="width: 250px; min-height: 35px;">
+    <q-item :to="item.path" class="drawerClass text-bold" active-class="q-item-no-link-highlighting drawerActive" style="width: 250px; min-height: 35px;">
       <q-item-section avatar>
         <q-icon :name="item.meta.icon"/>
       </q-item-section>
