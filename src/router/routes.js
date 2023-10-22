@@ -1,6 +1,6 @@
 const routes = [
   {
-    path: '/',
+    path: '/Dashboard',
     redirect: '/Dashboard',
     component: () => import('src/layouts/MainLayout.vue'),
     meta: {
@@ -44,38 +44,7 @@ const routes = [
       //   ]
       // },
 
-      // {
-      //   path: '/',
-      //   meta: { label: 'Accounts', icon: 'group', roles: ['ADMIN', 'VIEW_ACCOUNTS', 'CASHIER'] }, // Group label and icon
-      //   children: [
-      //     {
-      //       path: '/Accounts', 
-      //       component: () => import('pages/Accounts/Accounts.vue'),
-      //       name: 'Accounts',
-      //       meta: { icon: 'fas fa-credit-card', roles: ['ADMIN', 'VIEW_ACCOUNTS', 'CASHIER'] }
-      //     },
-      //     {
-      //       path: '/Transactions', 
-      //       component: () => import('pages/Accounts/Transactions.vue'),
-      //       name: 'Transactions',
-      //       meta: { icon: 'fas fa-credit-card', roles: ['ADMIN', 'VIEW_TRANSACTIONS', 'CASHIER'] }
-      //     },
-      //     // Add more routes for the Management group here
-      //   ]
-      // },
-      // {
-      //   path: '/',
-      //   meta: { label: 'Transactions', icon: 'group', roles: ['any'] }, // Group label and icon
-      //   children: [
-      //     {
-      //       path: '/View-Transactions', 
-      //       component: () => import('pages/Transactions/Transactions.vue'),
-      //       name: 'View Transactions',
-      //       meta: { icon: 'dashboard', roles: ['any'] }
-      //     },
-      //     // Add more routes for the Management group here
-      //   ]
-      // },
+   
       
       
      
@@ -83,7 +52,7 @@ const routes = [
   },
 
   {
-    path: '/LandingPage', 
+    path: '/', 
     component: () => import('components/LandingPage.vue'),
     name: 'LandingPage',
     roles:["any"]
@@ -97,33 +66,7 @@ const routes = [
   },
 
 
-  {
-    path: '/Calendar', 
-    component: () => import('components/Calendar.vue'),
-    name: 'Calendar',
-    roles:["any"]
-  },
-
-  {
-    path: '/CalendarDay', 
-    component: () => import('components/CalendarDay.vue'),
-    name: 'CalendarDay',
-    roles:["any"]
-  },
-
-  {
-    path: '/AddSchedule', 
-    component: () => import('src/components/AddSchedule.vue'),
-    name: 'AddSchedule',
-    roles:["any"]
-  },
-
-  {
-    path: '/GetSchedules', 
-    component: () => import('src/components/GetSchedules.vue'),
-    name: 'GetSchedules',
-    roles:["any"]
-  },
+  
 
  
   {

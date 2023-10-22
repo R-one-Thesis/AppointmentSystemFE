@@ -1,7 +1,17 @@
 <template>
     <div class="subcontent q-pa-md bg-image">
-      <navigation-bar @today="onToday" @prev="onPrev" @next="onNext" />
+      <div class="calendar-content">
+        <h2><span class="mint-green">Schedule</span> <br>Your Visit</h2>
+        <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Quibusdam aliquam sequi mollitia commodi ipsum. Natus pariatur quasi quod dolores incidunt nostrum, in tenetur adipisci earum accusamus possimus, corrupti fugit quis?</p>
+        <q-btn
+          label="Login"
+          href="#/Login"
+          class="q-mt-md q-mb-md drawerActive text-white"
+        />
+      </div>
+      
       <div class="calendar-parent">
+        <navigation-bar @today="onToday" @prev="onPrev" @next="onNext" />
         <div class="year-header text-center">
             <h4>{{ ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'][new Date(selectedDate).getMonth()] }} {{ new Date(selectedDate).getFullYear() }}</h4>
         </div>
@@ -15,6 +25,7 @@
             focusable
             hoverable
             no-active-date
+            :disabled-weekdays="[0,6]"
             :day-min-height="60"
             :day-height="0"
             @change="onChange"
@@ -60,7 +71,13 @@
               <div><strong>Time:</strong> {{ scheduleDialogData.time }}</div>
               <div><strong>Duration:</strong> {{ scheduleDialogData.duration }} minutes</div>
               <div><strong>Status:</strong> {{ scheduleDialogData.booked === 0 ? 'Available' : 'Already booked' }}</div>
-  
+              <div class="row justify-start">
+              <q-btn
+                label="Book now"
+                class="q-mt-md q-mb-md drawerActive text-white"
+                @click="addSchedule"
+              />
+            </div>
             </div>
           </q-card-section>
         </q-card>
@@ -264,7 +281,7 @@
   
   <style scoped>
       .bg-image{
-          background: linear-gradient(to left, rgba(255, 255, 255, 0.10), rgba(255, 255, 255, 0.8)), url("src/assets/dentalbg.jpg");
+          background: linear-gradient(to left, rgba(255, 255, 255, 0.20), rgba(255, 255, 255, 0.5)), url("src/assets/dentalbg.jpg");
           background-repeat: no-repeat;
           background-size: cover;
           background-position: right center;
@@ -276,6 +293,36 @@
       }
       .q-pa-md {
           height: 100vh !important;
+      }
+
+      .subcontent {
+        display: grid;
+        grid-template-columns: 40% 60%;
+        width: 100%;
+        align-items: center;
+        gap: 20px;
+        justify-content: center;
+      }
+
+      .calendar-content {
+        display: flex;
+        justify-content: center;
+        flex-direction: column;
+        padding: 30px;
+      }
+
+      .calendar-content h2 {
+        font-weight: 700;
+        margin: 0;
+      }
+
+      .calendar-content a {
+        padding: 8px;
+        width: 220px;
+      }
+
+      .book-now a {
+        padding: 10px 30px;
       }
   
   

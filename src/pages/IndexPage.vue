@@ -15,6 +15,7 @@
           focusable
           hoverable
           no-active-date
+          :disabled-weekdays="[0,6]"
           :day-min-height="60"
           :day-height="0"
           @change="onChange"
