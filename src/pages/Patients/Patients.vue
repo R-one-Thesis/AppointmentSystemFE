@@ -12,7 +12,7 @@
         transition-show="flip-down"
         @hide="onHide"
       >
-        <q-card style="width: 800px; max-width: 80vw">
+        <q-card style="width: 900px; max-width: 80vw">
           <q-toolbar>
             <!-- <q-avatar>
                 <img src="https://cdn.quasar.dev/logo-v2/svg/logo.svg">
@@ -30,66 +30,8 @@
             <q-form @submit="onSubmit" @reset="onReset" class="q-gutter-sd">
               <div class="q-gutter-md q-col-gutter-md">
                 <div class="row q-col-gutter-md">
-                  <div class="q-col col-12 col-sm-12 col-md-3">
-                    <q-input
-                      class="custom-input"
-                      outlined
-                      dense
-                      stack-label
-                      v-model="formInput.first_name"
-                      label="First Name"
-                      lazy-rules
-                      :rules="[rules.requiredField]"
-                    />
-                  </div>
-  
-                  <div class="q-col col-12 col-sm-6 col-md-3">
-                    <q-input
-                      class="custom-input"
-                      outlined
-                      dense
-                      v-model="formInput.middle_name"
-                      label="Middle Name"
-                    />
-                  </div>
-  
-                  <div class="q-col col-12 col-sm-6 col-md-3">
-                    <q-input
-                      class="custom-input"
-                      outlined
-                      dense
-                      v-model="formInput.last_name"
-                      label="Last Name"
-                      lazy-rules
-                      :rules="[rules.requiredField]"
-                    />
-                  </div>
-                  <div class="q-col col-12 col-sm-6 col-md-3">
-                    <q-select
-                      class="custom-input-select col-5"
-                      outlined
-                      v-model="formInput.extension_name"
-                      :options="selectExtenstion"
-                      map-options
-                      option-value="extension_name"
-                      option-label="value"
-                      label="Extension Name"
-                      dense
-                    />
-                  </div>
-                  <div class="q-col col-12 col-sm-6 col-md-4">
-                    <q-input
-                      class="custom-input"
-                      outlined
-                      dense
-                      stack-label
-                      v-model="formInput.home_address"
-                      label="Address"
-                      lazy-rules
-                      :rules="[rules.requiredField]"
-                    />
-                  </div>
-                  <div class="q-col col-12 col-sm-6 col-md-4">
+
+                  <div class="q-col col-12 col-sm-6 col-md-6">
                     <q-input
                       class="custom-input"
                       outlined
@@ -101,7 +43,7 @@
                       :rules="[rules.requiredField, rules.properEmail]"
                     />
                   </div>
-                  <div class="q-col col-12 col-sm-6 col-md-4">
+                  <div class="q-col col-12 col-sm-6 col-md-6">
              
 
                     <q-input
@@ -125,19 +67,70 @@
                       </template>
                     </q-input>
                   </div>
+
+
+                  <div class="q-col col-12 col-sm-12 col-md-4">
+                    <q-input
+                      class="custom-input"
+                      outlined
+                      dense
+                      stack-label
+                      v-model="formInput.first_name"
+                      label="First Name"
+                      lazy-rules
+                      :rules="[rules.requiredField]"
+                    />
+                  </div>
   
                   <div class="q-col col-12 col-sm-6 col-md-4">
                     <q-input
                       class="custom-input"
                       outlined
                       dense
-                      stack-label
-                      v-model="formInput.mobile_number"
-                      label="Phone Number"
-                      lazy-rules
-                      :rules="[rules.requiredField, rules.mobileNumber]"
+                      v-model="formInput.middle_name"
+                      label="Middle Name"
                     />
                   </div>
+  
+                  <div class="q-col col-12 col-sm-6 col-md-4">
+                    <q-input
+                      class="custom-input"
+                      outlined
+                      dense
+                      v-model="formInput.last_name"
+                      label="Last Name"
+                      lazy-rules
+                      :rules="[rules.requiredField]"
+                    />
+                  </div>
+                  <div class="q-col col-12 col-sm-6 col-md-6">
+                    <q-select
+                      class="custom-input-select col-5"
+                      outlined
+                      v-model="formInput.extension_name"
+                      :options="selectExtenstion"
+                      map-options
+                      option-value="extension_name"
+                      option-label="value"
+                      label="Extension Name"
+                      dense
+                    />
+                  </div>
+                  <div class="q-col col-12 col-sm-6 col-md-6">
+                    <q-input
+                      class="custom-input"
+                      outlined
+                      dense
+                      stack-label
+                      v-model="formInput.home_address"
+                      label="Address"
+                      lazy-rules
+                      :rules="[rules.requiredField]"
+                    />
+                  </div>
+                  
+  
+                  
                   <div class="q-col col-12 col-sm-6 col-md-4">
                    
 
@@ -167,6 +160,21 @@
                       :rules="[rules.requiredField]"
                     />
                   </div>
+
+                  <div class="q-col col-12 col-sm-6 col-md-4">
+                    <q-input
+                      class="custom-input"
+                      outlined
+                      dense
+                      stack-label
+                      v-model="formInput.mobile_number"
+                      label="Mobile Number"
+                      lazy-rules
+                      :rules="[rules.requiredField, rules.mobileNumber]"
+                    />
+                  </div>
+
+                  
                   
                   {{ formInput }}
                   
@@ -195,83 +203,46 @@
       </q-dialog>
   
       <q-table
-        class="my-sticky-column-table"
+        title="Patients Record"
         :rows="tablerows"
         :columns="columns"
         row-key="Id"
+        selection="single"
         v-model:selected="selected"
         dense
         :separator="separator"
         :filter="filter"
         :loading="loading"
-        :pagination="{ rowsPerPage: 15 }"
-        :rows-per-page-options="[10, 15, 50]"
-      >
-        <template v-slot:body-cell-business_name="props">
-          <q-td :props="props">
-            <b>
-              {{ props.value }}
-            </b>
-          </q-td>
-        </template>
-        <template v-slot:body-cell-type="props">
-          <q-td key="type" :props="props">
-            <div class="cell-content">
-              <q-badge
-            
-              >
-                {{ props.row.client_type.toUpperCase() }}
-              </q-badge>
-  
-            </div>
-          </q-td>
-        </template>
-  
-        <template v-slot:top-left="props">
-          <div
-            class="title-container flex justify-center items-center"
-            style="gap: 30px"
-          >
-            <!-- Table Title -->
-            <q-label class="q-table__title q-mr-md">Patients Record</q-label>
-  
-         
-  
-            <!-- Add any other elements or styling as needed between the title and dropdown -->
-          </div>
-        </template>
-   
+        :pagination="{rowsPerPage:15}"
+        :rows-per-page-options="[10,15,50]"
+
+        >
+
         <template v-slot:body-cell-actions="props">
-          <q-td :props="props">
-            <q-btn
-              class="q-mr-xs"
-              round
-              dense
-              size="sm"
-              icon="zoom_in"
-              @click="viewForm(props)"
-            />
-            <q-btn
-              class="q-mr-xs"
-              round
-              dense
-              color="positive"
-              size="sm"
-              icon="edit"
-              @click="EditRecord(props)"
-            />
-            <q-btn
-              round
-              dense
-              color="red"
-              size="sm"
-              icon="delete"
-              :loading="deleting"
-              @click="DeleteRecord(props)"
-            />
-          </q-td>
-        </template>
-  
+              <q-td :props="props">
+
+                  <q-btn
+                    class="q-mr-xs"
+                    round
+                    dense
+                    color="positive"
+                    size="sm"
+                    icon="edit"
+                    @click="EditRecord(props)"
+                  />
+                  <q-btn
+
+                    round
+                    dense
+                    color="red"
+                    size="sm"
+                    icon="delete"
+                    @click="DeleteRecord(props)"
+                  />
+
+              </q-td>
+            </template>
+
         <template v-slot:top-right="props">
           <q-input
             outlined
@@ -284,19 +255,20 @@
               <q-icon name="search" />
             </template>
           </q-input>
-  
+
           <q-btn
             flat
             round
             dense
             :icon="props.inFullscreen ? 'fullscreen_exit' : 'fullscreen'"
             @click="props.toggleFullscreen"
+
           >
             <q-tooltip :disable="$q.platform.is.mobile" v-close-popup
               >{{ props.inFullscreen ? "Exit Fullscreen" : "Toggle Fullscreen" }}
             </q-tooltip>
           </q-btn>
-  
+
           <q-btn
             flat
             round
@@ -312,18 +284,23 @@
               >{{ mode === "grid" ? "Vertical" : "Grid" }}
             </q-tooltip>
           </q-btn>
-  
-          
+
+          <!-- <q-btn
+            class="bg-button1 text-white"
+            icon-right="archive"
+            no-caps
+            @click="exportTable"
+          /> -->
+
         </template>
-  
+
         <template v-slot:loading>
           <q-inner-loading showing color="primary" />
         </template>
+
       </q-table>
     </div>
-    <!-- <div class="q-pa-md">
-          Selected: {{ JSON.stringify(selected) }}
-      </div> -->
+
   </template>
 
 
@@ -337,6 +314,14 @@ const addTransaction = ref(true);
 const $q = useQuasar();
 const formInput = ref({});
 const submitting = ref(false);
+const separator = ref("vertical");
+const tablerows = ref([]);
+const loading = ref(false);
+const filter = ref("");
+const selected = ref([]);
+const viewing = ref(false);
+
+
 const rules = ref({
   requiredField: (v) => !!v || "Required field.",
   requiredSelection: (v) =>
@@ -357,13 +342,147 @@ const selectExtenstion = [
    'Jr', 'Sr', 'III', 'IV'
 ];
 
+const columns = [
+  {
+    align: "left",
+    label: "Name",
+    field: (row) =>
+      row.first_name + " " + (row.middle_name ?? "") + " " + row.last_name + " " + row.extension_name,
+    name: "Name",
+    sortable: true,
+  },
+
+  {
+    align: "left",
+    label: "Email",
+    field: "Email",
+    field: (row) => row.email,
+    name: "Email",
+    sortable: true,
+  },
+  {
+    align: "left",
+    label: "Birthday",
+    field: "Birthday",
+    field: (row) => row.birthday,
+    name: "Birthday",
+    sortable: true,
+  },
+  {
+    align: "left",
+    label: "Sex",
+    field: "Sex",
+    field: (row) => row.sex,
+    name: "Sex",
+    sortable: true,
+  },
+  {
+    align: "left",
+    label: "Religion",
+    field: "Religion",
+    field: (row) => row.religion,
+    name: "Religion",
+    sortable: true,
+  },
+  {
+    align: "left",
+    label: "Home Address",
+    field: "Home Address",
+    field: (row) => row.home_address,
+    name: "Home Address",
+    sortable: true,
+  },
+
+  {
+    align: "left",
+    label: "Home Phone #",
+    field: "Home Phone #",
+    field: (row) => row.home_phone_number,
+    name: "Home Phone #",
+    sortable: true,
+  },
+  {
+    align: "left",
+    label: "Office Address",
+    field: "Office Address",
+    field: (row) => row.office_address,
+    name: "Office Address",
+    sortable: true,
+  },
+  {
+    align: "left",
+    label: "Work Phone Number",
+    field: "Work Phone Number",
+    field: (row) => row.work_phone_number,
+    name: "Work Phone Number",
+    sortable: true,
+  },
+  {
+    align: "left",
+    label: "Mobile Number",
+    field: "Mobile Number",
+    field: (row) => row.mobile_number,
+    name: "Mobile Number",
+    sortable: true,
+  },
+  {
+    align: "left",
+    label: "Marital Status",
+    field: "Marital Status",
+    field: (row) => row.marital_status,
+    name: "Marital Status",
+    sortable: true,
+  },
+  {
+    align: "left",
+    label: "Spouse",
+    field: "Spouse",
+    field: (row) => row.spouse,
+    name: "Spouse",
+    sortable: true,
+  },
+  {
+    align: "left",
+    label: "Person Responsible",
+    field: "Person Responsible",
+    field: (row) => row.person_responsible_for_the_account,
+    name: "Person Responsible",
+    sortable: true,
+  },
+  {
+    align: "left",
+    label: "Person Responsible Phone #",
+    field: "Person Responsible Phone #",
+    field: (row) => row.person_responsible_mobile_number,
+    name: "Person Responsible Phone #",
+    sortable: true,
+  },
+  {
+    align: "left",
+    label: "Relationship",
+    field: "Relationship",
+    field: (row) => row.relationship,
+    name: "Relationship",
+    sortable: true,
+  },
+  {
+    align: "left",
+    label: "Referral Person",
+    field: "Referral Person",
+    field: (row) => row.referal_person,
+    name: "Referral Person",
+    sortable: true,
+  },
+  { name: "actions", label: "Action", align: "center", style: "width:0px;" },
+];
+
 const AddPatient = () => {
   formProfile.value = true;
   addTransaction.value = true;
 };
 
 const onReset = () => {
-  formInput.value = {}
+  // formInput.value = {}
   // loadData();
 };
 
@@ -397,7 +516,7 @@ const onSubmit = (val) => {
           });
           onReset();
           submitting.value = false;
-          formSchedule.value = false;
+          // formSchedule.value = false;
         }
       })
       .catch((error) => {
@@ -413,5 +532,36 @@ const onSubmit = (val) => {
 };
 
 
+const loadData = () => {
+  loading.value = true;
+  api
+    .viewAllPatients()
+    .then((response) => {
+      if (response == "401") {
+        $q.notify({
+          color: "negative",
+          position: "top",
+          message: "Unauthenticated",
+          icon: "report_problem",
+        });
+        loading.value = false;
+        return;
+      }
+      console.log(response);
+      tablerows.value = response.patiens;
+      loading.value = false;
+    })
+    .catch(() => {
+      $q.notify({
+        color: "negative",
+        position: "top",
+        message: "Loading failed",
+        icon: "report_problem",
+      });
+      loading.value = false;
+    });
+
+};
+loadData();
 
 </script>
