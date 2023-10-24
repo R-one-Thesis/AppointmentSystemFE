@@ -41,6 +41,7 @@
                       label="Email"
                       lazy-rules
                       :rules="[rules.requiredField, rules.properEmail]"
+                      v-if="addTransaction"
                     />
                   </div>
                   <div class="q-col col-12 col-sm-6 col-md-6">
@@ -129,7 +130,6 @@
                     />
                   </div>
                   
-  
                   
                   <div class="q-col col-12 col-sm-6 col-md-4">
                    
@@ -149,15 +149,16 @@
 
                   </div>
                   <div class="q-col col-12 col-sm-6 col-md-4">
-                    <q-input
-                      class="custom-input"
+                    <q-select
+                      class="custom-input-select col-5"
                       outlined
-                      dense
-                      stack-label
                       v-model="formInput.sex"
+                      :options="selectSex"
+                      map-options
+                      option-value="sex"
+                      option-label="value"
                       label="Sex"
-                      lazy-rules
-                      :rules="[rules.requiredField]"
+                      dense
                     />
                   </div>
 
@@ -174,9 +175,136 @@
                     />
                   </div>
 
+                  <div class="q-col col-12 col-sm-6 col-md-4">
+                    <q-input
+                      class="custom-input"
+                      outlined
+                      dense
+                      stack-label
+                      v-model="formInput.religion"
+                      label="Religion"
+                      lazy-rules
+                      v-if="editMode"
+                    />
+                  </div>
+
+                  <div class="q-col col-12 col-sm-6 col-md-4">
+                    <q-input
+                      class="custom-input"
+                      outlined
+                      dense
+                      stack-label
+                      v-model="formInput.home_phone_number"
+                      label="Home Phone #"
+                      lazy-rules
+                      v-if="editMode"
+                    />
+                  </div>
                   
+                  <div class="q-col col-12 col-sm-6 col-md-4">
+                    <q-input
+                      class="custom-input"
+                      outlined
+                      dense
+                      stack-label
+                      v-model="formInput.office_address"
+                      label="Office Address"
+                      lazy-rules
+                      v-if="editMode"
+                    />
+                  </div>
+                  <div class="q-col col-12 col-sm-6 col-md-4">
+                    <q-input
+                      class="custom-input"
+                      outlined
+                      dense
+                      stack-label
+                      v-model="formInput.work_phone_number"
+                      label="Work Phone #"
+                      lazy-rules
+                      v-if="editMode"
+                    />
+                  </div>
+
+                  <div class="q-col col-12 col-sm-6 col-md-4">
+                    <q-input
+                      class="custom-input"
+                      outlined
+                      dense
+                      stack-label
+                      v-model="formInput.marital_status"
+                      label="Marital Status"
+                      lazy-rules
+                      v-if="editMode"
+                    />
+                  </div>
+
+                  <div class="q-col col-12 col-sm-6 col-md-4">
+                    <q-input
+                      class="custom-input"
+                      outlined
+                      dense
+                      stack-label
+                      v-model="formInput.spouse"
+                      label="Spouse"
+                      lazy-rules
+                      v-if="editMode"
+                    />
+                  </div>
+
+                  <div class="q-col col-12 col-sm-6 col-md-6">
+                    <q-input
+                      class="custom-input"
+                      outlined
+                      dense
+                      stack-label
+                      v-model="formInput.person_responsible_for_the_account"
+                      label="Person Responsible for the account"
+                      lazy-rules
+                      v-if="editMode"
+                    />
+                  </div>
+
+                  <div class="q-col col-12 col-sm-6 col-md-6">
+                    <q-input
+                      class="custom-input"
+                      outlined
+                      dense
+                      stack-label
+                      v-model="formInput.person_responsible_mobile_number"
+                      label="Person Responsible Mobile #"
+                      lazy-rules
+                      v-if="editMode"
+                    />
+                  </div>
+
+                  <div class="q-col col-12 col-sm-6 col-md-4">
+                    <q-input
+                      class="custom-input"
+                      outlined
+                      dense
+                      stack-label
+                      v-model="formInput.relationship"
+                      label="Relationship"
+                      lazy-rules
+                      v-if="editMode"
+                    />
+                  </div>
+
+                  <div class="q-col col-12 col-sm-6 col-md-4">
+                    <q-input
+                      class="custom-input"
+                      outlined
+                      dense
+                      stack-label
+                      v-model="formInput.referal_person"
+                      label="Referral Person"
+                      lazy-rules
+                      v-if="editMode"
+                    />
+                  </div>
                   
-                  {{ formInput }}
+                  <!-- {{ formInput }} -->
                   
                 
                 </div>
@@ -320,7 +448,7 @@ const loading = ref(false);
 const filter = ref("");
 const selected = ref([]);
 const viewing = ref(false);
-
+const editMode = ref(false); // Initially, we are not in edit mode
 
 const rules = ref({
   requiredField: (v) => !!v || "Required field.",
@@ -342,6 +470,12 @@ const selectExtenstion = [
    'Jr', 'Sr', 'III', 'IV'
 ];
 
+const selectSex = [
+  'Male', 'Female'
+]
+
+
+
 const columns = [
   {
     align: "left",
@@ -352,14 +486,7 @@ const columns = [
     sortable: true,
   },
 
-  {
-    align: "left",
-    label: "Email",
-    field: "Email",
-    field: (row) => row.email,
-    name: "Email",
-    sortable: true,
-  },
+ 
   {
     align: "left",
     label: "Birthday",
@@ -393,30 +520,7 @@ const columns = [
     sortable: true,
   },
 
-  {
-    align: "left",
-    label: "Home Phone #",
-    field: "Home Phone #",
-    field: (row) => row.home_phone_number,
-    name: "Home Phone #",
-    sortable: true,
-  },
-  {
-    align: "left",
-    label: "Office Address",
-    field: "Office Address",
-    field: (row) => row.office_address,
-    name: "Office Address",
-    sortable: true,
-  },
-  {
-    align: "left",
-    label: "Work Phone Number",
-    field: "Work Phone Number",
-    field: (row) => row.work_phone_number,
-    name: "Work Phone Number",
-    sortable: true,
-  },
+  
   {
     align: "left",
     label: "Mobile Number",
@@ -433,14 +537,7 @@ const columns = [
     name: "Marital Status",
     sortable: true,
   },
-  {
-    align: "left",
-    label: "Spouse",
-    field: "Spouse",
-    field: (row) => row.spouse,
-    name: "Spouse",
-    sortable: true,
-  },
+  
   {
     align: "left",
     label: "Person Responsible",
@@ -465,20 +562,28 @@ const columns = [
     name: "Relationship",
     sortable: true,
   },
-  {
-    align: "left",
-    label: "Referral Person",
-    field: "Referral Person",
-    field: (row) => row.referal_person,
-    name: "Referral Person",
-    sortable: true,
-  },
+ 
   { name: "actions", label: "Action", align: "center", style: "width:0px;" },
 ];
 
 const AddPatient = () => {
   formProfile.value = true;
   addTransaction.value = true;
+  editMode.value = false;
+};
+
+
+const EditRecord = (val) => {
+  formInput.value = val.row;
+  formProfile.value = true;
+  editMode.value = true;
+  addTransaction.value = false;
+};
+
+const onHide = () => {
+  if (editMode.value) {
+    formInput.value = {};
+  }
 };
 
 const onReset = () => {
@@ -516,7 +621,7 @@ const onSubmit = (val) => {
           });
           onReset();
           submitting.value = false;
-          // formSchedule.value = false;
+          formProfile.value = false;
         }
       })
       .catch((error) => {
@@ -528,7 +633,52 @@ const onSubmit = (val) => {
         });
         submitting.value = false;
       });
-  } 
+  } else {
+    $q.dialog({
+      title: "Edit Patient Record",
+      message: "Are you sure you want to update?",
+      cancel: true,
+    }).onOk(() => {
+      submitting.value = true;
+      api
+        .updatePatient(formInput.value)
+        .then((response) => {
+          console.log(response);
+          if (response.data?.error || response.data?.message) {
+            $q.notify({
+              color: "negative",
+              position: "top",
+              message:
+                JSON.stringify(response.data?.error) ??
+                JSON.stringify(response.data?.message) ??
+                "Failed to Update Patient",
+              icon: "report_problem",
+            });
+            submitting.value = false;
+          } else {
+            // Error response
+            $q.notify({
+              color: "green-4",
+              textColor: "white",
+              icon: "cloud_done",
+              message: "Patient has been updated!",
+            });
+            submitting.value = false;
+            formProfile.value = false;
+            onReset();
+          }
+        })
+        .catch((error) => {
+          $q.notify({
+            color: "negative",
+            position: "top",
+            message: error.message ?? "Failed to Update Patient",
+            icon: "report_problem",
+          });
+          submitting.value = false;
+        });
+    });
+  }
 };
 
 

@@ -37,6 +37,23 @@ export default {
         return error.response;
       }
     },
+
+    async updatePatient(patientDetails) {
+      const body = {
+        
+        
+      }
+      try {
+        const response = await api.put("api/update-patients/"+patientDetails.id,patientDetails ); // Use the 'api' instance here
+        if (response) {
+          return response.data;
+        }
+      } catch (error) {
+        console.log(error);
+        return error.response;
+      }
+    },
+  
   
    
   };
