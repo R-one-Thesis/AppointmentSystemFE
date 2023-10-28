@@ -72,7 +72,12 @@ const routes = [
     roles:["any"]
   },
 
-
+  {
+    path: '/RecordHistory', 
+    component: () => import('components/RecordHistory.vue'),
+    name: 'RecordHistory',
+    roles:["any"]
+  },
   
 
  

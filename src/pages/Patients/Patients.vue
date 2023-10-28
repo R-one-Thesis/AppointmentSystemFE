@@ -42,6 +42,7 @@
                       lazy-rules
                       :rules="[rules.requiredField, rules.properEmail]"
                       v-if="addTransaction"
+                      :readonly="viewing != false"
                     />
                   </div>
                   <div class="q-col col-12 col-sm-6 col-md-6">
@@ -57,6 +58,7 @@
                       :type="isPwd ? 'password' : 'text'"
                       :rules="[rules.requiredField]"
                       v-if="addTransaction"
+                      :readonly="viewing != false"
                     >
                     
                       <template v-slot:append>
@@ -80,6 +82,7 @@
                       label="First Name"
                       lazy-rules
                       :rules="[rules.requiredField]"
+                      :readonly="viewing != false"
                     />
                   </div>
   
@@ -90,6 +93,7 @@
                       dense
                       v-model="formInput.middle_name"
                       label="Middle Name"
+                      :readonly="viewing != false"
                     />
                   </div>
   
@@ -102,6 +106,7 @@
                       label="Last Name"
                       lazy-rules
                       :rules="[rules.requiredField]"
+                      :readonly="viewing != false"
                     />
                   </div>
                   <div class="q-col col-12 col-sm-6 col-md-6">
@@ -115,6 +120,7 @@
                       option-label="value"
                       label="Extension Name"
                       dense
+                      :readonly="viewing != false"
                     />
                   </div>
                   <div class="q-col col-12 col-sm-6 col-md-6">
@@ -127,6 +133,7 @@
                       label="Address"
                       lazy-rules
                       :rules="[rules.requiredField]"
+                      :readonly="viewing != false"
                     />
                   </div>
                   
@@ -145,6 +152,7 @@
                       label="Birthday"
                       lazy-rules
                       :rules="[rules.requiredField]"
+                      :readonly="viewing != false"
                     />
 
                   </div>
@@ -159,6 +167,7 @@
                       option-label="value"
                       label="Sex"
                       dense
+                      :readonly="viewing != false"
                     />
                   </div>
 
@@ -172,6 +181,7 @@
                       label="Mobile Number"
                       lazy-rules
                       :rules="[rules.requiredField, rules.mobileNumber]"
+                      :readonly="viewing != false"
                     />
                   </div>
 
@@ -184,7 +194,8 @@
                       v-model="formInput.religion"
                       label="Religion"
                       lazy-rules
-                      v-if="editMode"
+                      v-if="editMode || viewing"
+                      :readonly="viewing != false"
                     />
                   </div>
 
@@ -197,7 +208,8 @@
                       v-model="formInput.home_phone_number"
                       label="Home Phone #"
                       lazy-rules
-                      v-if="editMode"
+                      v-if="editMode || viewing"
+                      :readonly="viewing != false"
                     />
                   </div>
                   
@@ -210,7 +222,8 @@
                       v-model="formInput.office_address"
                       label="Office Address"
                       lazy-rules
-                      v-if="editMode"
+                      v-if="editMode || viewing"
+                      :readonly="viewing != false"
                     />
                   </div>
                   <div class="q-col col-12 col-sm-6 col-md-4">
@@ -222,7 +235,8 @@
                       v-model="formInput.work_phone_number"
                       label="Work Phone #"
                       lazy-rules
-                      v-if="editMode"
+                      v-if="editMode || viewing"
+                      :readonly="viewing != false"
                     />
                   </div>
 
@@ -235,7 +249,8 @@
                       v-model="formInput.marital_status"
                       label="Marital Status"
                       lazy-rules
-                      v-if="editMode"
+                      v-if="editMode || viewing"
+                      :readonly="viewing != false"
                     />
                   </div>
 
@@ -248,7 +263,8 @@
                       v-model="formInput.spouse"
                       label="Spouse"
                       lazy-rules
-                      v-if="editMode"
+                      v-if="editMode || viewing"
+                      :readonly="viewing != false"
                     />
                   </div>
 
@@ -261,7 +277,8 @@
                       v-model="formInput.person_responsible_for_the_account"
                       label="Person Responsible for the account"
                       lazy-rules
-                      v-if="editMode"
+                      v-if="editMode || viewing"
+                      :readonly="viewing != false"
                     />
                   </div>
 
@@ -274,7 +291,8 @@
                       v-model="formInput.person_responsible_mobile_number"
                       label="Person Responsible Mobile #"
                       lazy-rules
-                      v-if="editMode"
+                      v-if="editMode || viewing"
+                      :readonly="viewing != false"
                     />
                   </div>
 
@@ -287,7 +305,8 @@
                       v-model="formInput.relationship"
                       label="Relationship"
                       lazy-rules
-                      v-if="editMode"
+                      v-if="editMode || viewing"
+                      :readonly="viewing != false"
                     />
                   </div>
 
@@ -300,11 +319,11 @@
                       v-model="formInput.referal_person"
                       label="Referral Person"
                       lazy-rules
-                      v-if="editMode"
+                      v-if="editMode || viewing"
+                      :readonly="viewing != false"
                     />
                   </div>
                   
-                  <!-- {{ formInput }} -->
                   
                 
                 </div>
@@ -348,6 +367,14 @@
 
         <template v-slot:body-cell-actions="props">
               <q-td :props="props">
+                <q-btn
+                    class="q-mr-xs"
+                    round
+                    dense
+                    size="sm"
+                    icon="zoom_in"
+                    @click="viewForm(props)"
+                  />
 
                   <q-btn
                     class="q-mr-xs"
@@ -355,9 +382,11 @@
                     dense
                     color="positive"
                     size="sm"
-                    icon="edit"
                     @click="EditRecord(props)"
-                  />
+                  >
+                    <i class="fas fa-edit"></i>
+                  </q-btn>
+
                   <q-btn
 
                     round
@@ -529,39 +558,7 @@ const columns = [
     name: "Mobile Number",
     sortable: true,
   },
-  {
-    align: "left",
-    label: "Marital Status",
-    field: "Marital Status",
-    field: (row) => row.marital_status,
-    name: "Marital Status",
-    sortable: true,
-  },
   
-  {
-    align: "left",
-    label: "Person Responsible",
-    field: "Person Responsible",
-    field: (row) => row.person_responsible_for_the_account,
-    name: "Person Responsible",
-    sortable: true,
-  },
-  {
-    align: "left",
-    label: "Person Responsible Phone #",
-    field: "Person Responsible Phone #",
-    field: (row) => row.person_responsible_mobile_number,
-    name: "Person Responsible Phone #",
-    sortable: true,
-  },
-  {
-    align: "left",
-    label: "Relationship",
-    field: "Relationship",
-    field: (row) => row.relationship,
-    name: "Relationship",
-    sortable: true,
-  },
  
   { name: "actions", label: "Action", align: "center", style: "width:0px;" },
 ];
@@ -584,6 +581,17 @@ const onHide = () => {
   if (editMode.value) {
     formInput.value = {};
   }
+  if (viewing.value) {
+    formInput.value = {};
+  }
+  viewing.value = false;
+};
+
+const viewForm = (val) => {
+  formInput.value = val.row;
+  viewing.value = true;
+  formProfile.value = true;
+  
 };
 
 const onReset = () => {
