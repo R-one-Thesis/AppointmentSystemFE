@@ -324,7 +324,6 @@
                     />
                   </div>
                   
-                  
                 
                 </div>
               </div>
@@ -348,6 +347,8 @@
           </q-card-section>
         </q-card>
       </q-dialog>
+      <!-- <RecordHistory /> -->
+
   
       <q-table
         title="Patients Record"
@@ -466,6 +467,7 @@ import { ref, watch, computed } from "vue";
 import { exportFile, useQuasar } from "quasar";
 import { auth } from "../../stores/auth";
 import api from "./API";
+// import RecordHistory from '../components/RecordHistory.vue';
 const formProfile = ref(false);
 const addTransaction = ref(true);
 const $q = useQuasar();
