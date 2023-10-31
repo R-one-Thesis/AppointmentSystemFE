@@ -13,7 +13,7 @@
                                 <div class="flex column items-center justify-center q-mb-lg">
                                     <div class="text-h4 text-uppercase q-my-none text-weight-bold text-primary q-mb-sm text-center">
                                         Dental Clinic Online Appointment System Registration form</div>
-                                    <p class="mt-4">Please fillup the form</p>
+                                    <a class="mt-4" href="#/Login">Login here</a>
                                 </div>
                                 <q-form @submit="onSubmit" @reset="onReset" class="q-gutter-sd">
                                     <div class="q-gutter-md q-col-gutter-md">
@@ -120,7 +120,7 @@
                                             outlined
                                             dense
                                             stack-label
-                                            v-model="formInput.mobile_number"
+                                            v-model="formInput.home_phone_number"
                                             label="Phone Number"
                                             lazy-rules
                                             :rules="[rules.requiredField, rules.mobileNumber]"
@@ -156,7 +156,7 @@
                                             />
                                         </div>
                                         
-                                        {{ formInput }}
+                                        <!-- {{ formInput }} -->
                                         
                                         
                                         </div>

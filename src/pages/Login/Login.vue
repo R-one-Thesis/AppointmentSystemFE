@@ -31,7 +31,7 @@
                                         @click="login" :loading="loading"></q-btn>
                                     <div class="text-center row justify-between">
                                         <a href="/">Back to home</a>
-                                        <a href="">Dont have account?</a>
+                                        <a href="#/Register">Dont have account?</a>
                                     </div>
                                 </q-form>
                             </q-card-section>
