@@ -53,6 +53,22 @@ export default {
         return error.response;
       }
     },
+
+    async deletePatient(patientDetails) {
+      const body = {
+        
+        
+      }
+      try {
+        const response = await api.delete("api/delete-patient/"+patientDetails.id,patientDetails); // Use the 'api' instance here
+        if (response) {
+          return response.data;
+        }
+      } catch (error) {
+        console.log(error);
+        return error.response;
+      }
+    },
   
   
    

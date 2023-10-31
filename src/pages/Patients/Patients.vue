@@ -477,6 +477,7 @@ const separator = ref("vertical");
 const tablerows = ref([]);
 const loading = ref(false);
 const filter = ref("");
+const deleting = ref(false);
 const selected = ref([]);
 const viewing = ref(false);
 const editMode = ref(false); // Initially, we are not in edit mode
@@ -599,6 +600,57 @@ const viewForm = (val) => {
 const onReset = () => {
   // formInput.value = {}
   // loadData();
+};
+
+const DeleteRecord = (val) => {
+  $q.dialog({
+    title: "Delete Record",
+    message:
+      "Are you sure you want to delete, profile: " +
+      val.row.first_name +
+
+      "?",
+    cancel: true,
+  }).onOk(() => {
+    deleting.value = true;
+    api
+      .deletePatient(val.row)
+      .then((response) => {
+        console.log(response);
+        if (response.data?.error || response.data?.message) {
+          $q.notify({
+            color: "negative",
+            position: "top",
+            message:
+              JSON.stringify(response.data?.error) ??
+              JSON.stringify(response.data?.message) ??
+              "Failed to Delete User",
+            icon: "report_problem",
+          });
+          deleting.value = false;
+        } else {
+          // Error response
+          $q.notify({
+            color: "green-4",
+            textColor: "white",
+            icon: "cloud_done",
+            message: "Record has been deleted!",
+          });
+          deleting.value = false;
+          formProfile.value = false;
+          loadData();
+        }
+      })
+      .catch((error) => {
+        $q.notify({
+          color: "negative",
+          position: "top",
+          message: error.message ?? "Failed to Delete User",
+          icon: "report_problem",
+        });
+        deleting.value = false;
+      });
+  });
 };
 
 const onSubmit = (val) => {
