@@ -77,6 +77,13 @@
               <div><strong>Time:</strong> {{ scheduleDialogData.time }}</div>
               <div><strong>Duration:</strong> {{ scheduleDialogData.duration }} minutes</div>
               <div><strong>Status:</strong> {{ scheduleDialogData.booked === 0 ? 'Available' : 'Already booked' }}</div>
+              <div class="row justify-start">
+              <q-btn
+                label="Book now"
+                class="q-mt-md q-mb-md drawerActive text-white"
+                @click="bookNow"
+              />
+            </div>
             </div>
           </q-card-section>
         </q-card>

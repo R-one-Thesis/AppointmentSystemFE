@@ -345,9 +345,34 @@
               </div>
             </q-form>
           </q-card-section>
+          <!-- RECORD HISTORY -->
+          <q-table
+              title="Patients Record History"
+              :rows="historyrows"
+              :columns="historycolumns"
+              row-key="Id"
+              selection="single"
+              v-model:selected="selected"
+              dense
+              :separator="separator"
+              :filter="filter"
+              :loading="loading"
+              :pagination="{rowsPerPage:15}"
+              :rows-per-page-options="[10,15,50]"
+
+              >
+
+
+
+              <template v-slot:loading>
+                <q-inner-loading showing color="primary" />
+              </template>
+
+            </q-table>
         </q-card>
+        <!-- <RecordHistory /> -->
       </q-dialog>
-      <!-- <RecordHistory /> -->
+     
 
   
       <q-table
@@ -475,6 +500,7 @@ const formInput = ref({});
 const submitting = ref(false);
 const separator = ref("vertical");
 const tablerows = ref([]);
+const historyrows = ref([]);
 const loading = ref(false);
 const filter = ref("");
 const deleting = ref(false);
@@ -564,6 +590,67 @@ const columns = [
   
  
   { name: "actions", label: "Action", align: "center", style: "width:0px;" },
+];
+
+
+// HISTORY RECORD
+const historycolumns = [
+  {
+    align: "left",
+    label: "Name",
+    field: (row) =>
+      row.first_name + " " + (row.middle_name ?? "") + " " + row.last_name + " " + row.extension_name,
+    name: "Name",
+    sortable: true,
+  },
+
+ 
+  {
+    align: "left",
+    label: "Birthday",
+    field: "Birthday",
+    field: (row) => row.birthday,
+    name: "Birthday",
+    sortable: true,
+  },
+  {
+    align: "left",
+    label: "Date",
+    field: "Date",
+    field: (row) => row.date,
+    name: "Date",
+    sortable: true,
+  },
+
+  {
+    align: "left",
+    label: "Home Address",
+    field: "Home Address",
+    field: (row) => row.home_address,
+    name: "Home Address",
+    sortable: true,
+  },
+
+  
+  {
+    align: "left",
+    label: "Mobile Number",
+    field: "Mobile Number",
+    field: (row) => row.mobile_number,
+    name: "Mobile Number",
+    sortable: true,
+  },
+
+  {
+    align: "left",
+    label: "Previous Medical History",
+    field: "Previous Medical History",
+    field: (row) => row.religion,
+    name: "Previous Medical History",
+    sortable: true,
+  },
+  
+ 
 ];
 
 const AddPatient = () => {
