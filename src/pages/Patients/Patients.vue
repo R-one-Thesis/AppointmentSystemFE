@@ -12,7 +12,7 @@
         transition-show="flip-down"
         @hide="onHide"
       >
-        <q-card style="width: 900px; max-width: 80vw">
+        <q-card style="width: 1000px; max-width: 80vw">
           <q-toolbar>
             <!-- <q-avatar>
                 <img src="https://cdn.quasar.dev/logo-v2/svg/logo.svg">
@@ -323,6 +323,162 @@
                       :readonly="viewing != false"
                     />
                   </div>
+                  <div class="q-col col-12 col-sm-12 col-md-12">
+                    <q-toolbar-title
+                    ><span class="text-weight-bold text-center "
+                      >Medical/Dental History</span
+                    ></q-toolbar-title>
+                  </div>
+                  <div class="q-col col-12 col-sm-12 col-md-12">
+                    <span
+                      >Are you under the care of a physician? If yes, give the name, address and the reason.</span>
+                  </div>
+                  <div class="q-col col-12 col-sm-6 col-md-6">
+                    
+                    <q-input
+                      class="custom-input"
+                      outlined
+                      dense
+                      stack-label
+                      v-model="formInput.physician"
+                      label="Physician"
+                      lazy-rules
+
+                    />
+                  </div>
+                  <div class="q-col col-12 col-sm-6 col-md-6">
+                    <q-input
+                      class="custom-input"
+                      outlined
+                      dense
+                      stack-label
+                      v-model="formInput.physaddress"
+                      label="Physician Address"
+                      lazy-rules
+
+                    />
+                  </div>
+                  <div class="q-col col-12 col-sm-6 col-md-12">
+                    <q-input
+                      rows="2"
+                      class="custom-input"
+                      outlined
+                      type="textarea"
+                      dense
+                      stack-label
+                      v-model="formInput.reason"
+                      label="Reason"
+                      lazy-rules
+                      style="resize: none;"
+
+                    />
+                  </div>
+                  <div class="q-col col-12 col-sm-12 col-md-12">
+                    <span
+                      >Any hospitalization or surgery in the past 5 years? If yes, what for</span>
+                  </div>
+                  <div class="q-col col-12 col-sm-6 col-md-12">
+                    <q-input
+                      rows="2"
+                      class="custom-input"
+                      outlined
+                      type="textarea"
+                      dense
+                      stack-label
+                      v-model="formInput.hospitalization"
+                      label="Hospitalization"
+                      lazy-rules
+                      style="resize: none;"
+
+                    />
+                  </div>
+                  <div class="q-col col-12 col-sm-12 col-md-12">
+                    <span
+                      >Please check if you have or had any of the following:</span>
+                  </div>
+                  <div
+                  class="q-col col-12 col-sm-12 col-md-12"
+                        
+                        >
+                        <q-option-group
+                        :options="conditions"
+                        option-value="value"
+                        option-label="label"
+                        type="checkbox"
+                        v-model="formInput.conditions"
+                        :rules="[rules.requiredSelection]"
+                        dense
+                        style="display:grid; align-items: center; grid-template-columns: 1fr 1fr 1fr;"
+                      />
+                </div>
+                <div class="q-col col-12 col-sm-12 col-md-12">
+                    <span
+                      >Are you presently taking any medication? If so, give the name(s) - Separate with comma</span>
+                  </div>
+                  <div class="q-col col-12 col-sm-6 col-md-12">
+                    <q-input
+                      rows="2"
+                      class="custom-input"
+                      outlined
+                      type="textarea"
+                      dense
+                      stack-label
+                      v-model="formInput.medication"
+                      label="Medication"
+                      lazy-rules
+                      style="resize: none;"
+
+                    />
+                  </div>
+                  <div class="q-col col-12 col-sm-12 col-md-12">
+                    <span
+                      >Are you allergic or sensitive to any food, drug or medication? - Separate with comma</span>
+                  </div>
+                  <div class="q-col col-12 col-sm-6 col-md-12">
+                    <q-input
+                      rows="2"
+                      class="custom-input"
+                      outlined
+                      type="textarea"
+                      dense
+                      stack-label
+                      v-model="formInput.allergies"
+                      label="Allergies"
+                      lazy-rules
+                      style="resize: none;"
+
+                    />
+                  </div>
+                  <div class="q-col col-12 col-sm-12 col-md-12">
+                      <span class="text-bold" style="font-size: 20px;"
+                        >For Women Only</span>
+                      <p>Are you pregnant?</p>
+                      <q-radio v-model="formInput.pregnant" val="yes" label="Yes" />
+                      <q-radio v-model="formInput.pregnant" val="no" label="No" />
+                  </div>
+                  <div class="q-col col-12 col-sm-12 col-md-12">
+                   <q-input
+                     class="custom-input"
+                     outlined
+                     dense
+                     type="date"
+                    option-value="date"
+                    v-model="formInput.expected_date"
+                    :placeholder="ph"
+                     label="Expected Delivery"
+                     lazy-rules
+                   />
+
+                 </div>
+                 <div class="q-col col-12 col-sm-12 col-md-12">
+                    <span
+                      >Do you have any problems associated with your menstrual period?</span>
+                  </div>
+                  <div class="q-col col-12 col-sm-6 col-md-12">
+                      <q-radio v-model="formInput.mens_problems" val="yes" label="Yes"  />
+                      <q-radio v-model="formInput.mens_problems" val="no" label="No"  />
+
+                  </div>
                   
                 
                 </div>
@@ -345,32 +501,8 @@
               </div>
             </q-form>
           </q-card-section>
-          <!-- RECORD HISTORY -->
-          <q-table
-              title="Patients Record History"
-              :rows="historyrows"
-              :columns="historycolumns"
-              row-key="Id"
-              selection="single"
-              v-model:selected="selected"
-              dense
-              :separator="separator"
-              :filter="filter"
-              :loading="loading"
-              :pagination="{rowsPerPage:15}"
-              :rows-per-page-options="[10,15,50]"
-
-              >
-
-
-
-              <template v-slot:loading>
-                <q-inner-loading showing color="primary" />
-              </template>
-
-            </q-table>
+         
         </q-card>
-        <!-- <RecordHistory /> -->
       </q-dialog>
      
 
@@ -380,7 +512,6 @@
         :rows="tablerows"
         :columns="columns"
         row-key="Id"
-        selection="single"
         v-model:selected="selected"
         dense
         :separator="separator"
@@ -496,17 +627,17 @@ import api from "./API";
 const formProfile = ref(false);
 const addTransaction = ref(true);
 const $q = useQuasar();
-const formInput = ref({});
+const formInput = ref({conditions: []});
 const submitting = ref(false);
 const separator = ref("vertical");
 const tablerows = ref([]);
-const historyrows = ref([]);
 const loading = ref(false);
 const filter = ref("");
 const deleting = ref(false);
 const selected = ref([]);
 const viewing = ref(false);
 const editMode = ref(false); // Initially, we are not in edit mode
+const recordViewing = ref(false);
 
 const rules = ref({
   requiredField: (v) => !!v || "Required field.",
@@ -531,6 +662,37 @@ const selectExtenstion = [
 const selectSex = [
   'Male', 'Female'
 ]
+
+const conditions = ref([
+  { label: 'AIDS', value: 'aids' },
+  { label: 'Anemia', value: 'anemia', color: 'green' },
+  { label: 'Asthma', value: 'asthma', color: 'green' },
+  { label: 'Bleeding Tendency', value: 'bleeding_tendency', color: 'green' },
+  { label: 'Blood Disease', value: 'blood_disease', color: 'green' },
+  { label: 'Blood Transfusio', value: 'blood_transfusio', color: 'green' }, // Fixed the typo here (Bracess to Braces)
+  { label: 'Bypass', value: 'bypass', color: 'green' },
+  { label: 'Chest Pains', value: 'chest_pains', color: 'green' },
+  { label: 'Convolsions', value: 'convolsions', color: 'green' },
+  { label: 'Diabetes', value: 'diabetes', color: 'green' },
+  { label: 'Ear Disorder', value: 'ear_disorder', color: 'green' },
+  { label: 'Epilepsy', value: 'epilepsy', color: 'green' },
+  { label: 'Eye Disorder', value: 'eye_disorder', color: 'green' },
+  { label: 'Heart Murmur', value: 'heart_murmur', color: 'green' },
+  { label: 'Hemophilia', value: 'himophilia', color: 'green' },
+  { label: 'Hepatitis', value: 'hepatitis', color: 'green' },
+  { label: 'HIV(+)', value: 'hiv', color: 'green' },
+  { label: 'Hormone Disorder', value: 'hormone_disorder', color: 'green' },
+  { label: 'Hypertension', value: 'hypertension', color: 'green' },
+  { label: 'Jaundice', value: 'jaundice', color: 'green' },
+  { label: 'Kidney Disease', value: 'kidney_disease', color: 'green' },
+  { label: 'Malignancy, Tumor or Growth', value: 'malignancy', color: 'green' },
+  { label: 'Neurological Problems', value: 'neurological_problems', color: 'green' },
+  { label: 'Pacemaker', value: 'pacemaker', color: 'green' },
+  { label: 'Rheumatic Fever', value: 'rheumatic Fever', color: 'green' },
+  { label: 'Skin Disease', value: 'skin_disease', color: 'green' },
+  { label: 'Tuberculosis', value: 'tuberculosis', color: 'green' },
+  { label: 'Others', value: 'others', color: 'green' }
+]);
 
 
 
@@ -593,70 +755,13 @@ const columns = [
 ];
 
 
-// HISTORY RECORD
-const historycolumns = [
-  {
-    align: "left",
-    label: "Name",
-    field: (row) =>
-      row.first_name + " " + (row.middle_name ?? "") + " " + row.last_name + " " + row.extension_name,
-    name: "Name",
-    sortable: true,
-  },
 
- 
-  {
-    align: "left",
-    label: "Birthday",
-    field: "Birthday",
-    field: (row) => row.birthday,
-    name: "Birthday",
-    sortable: true,
-  },
-  {
-    align: "left",
-    label: "Date",
-    field: "Date",
-    field: (row) => row.date,
-    name: "Date",
-    sortable: true,
-  },
-
-  {
-    align: "left",
-    label: "Home Address",
-    field: "Home Address",
-    field: (row) => row.home_address,
-    name: "Home Address",
-    sortable: true,
-  },
-
-  
-  {
-    align: "left",
-    label: "Mobile Number",
-    field: "Mobile Number",
-    field: (row) => row.mobile_number,
-    name: "Mobile Number",
-    sortable: true,
-  },
-
-  {
-    align: "left",
-    label: "Previous Medical History",
-    field: "Previous Medical History",
-    field: (row) => row.religion,
-    name: "Previous Medical History",
-    sortable: true,
-  },
-  
- 
-];
 
 const AddPatient = () => {
   formProfile.value = true;
   addTransaction.value = true;
   editMode.value = false;
+  recordViewing.value = false;
 };
 
 
@@ -675,7 +780,9 @@ const onHide = () => {
     formInput.value = {};
   }
   viewing.value = false;
+
 };
+
 
 const viewForm = (val) => {
   formInput.value = val.row;
