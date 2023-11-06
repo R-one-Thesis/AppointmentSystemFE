@@ -4,6 +4,7 @@
         label="Add Patient (+)"
         @click="AddPatient"
         class="q-mt-md q-mb-md bg-button1 text-white drawerActive"
+        v-if="hasPermission('ADMIN')"
       />
   
       <q-dialog
@@ -626,6 +627,7 @@ import api from "./API";
 // import RecordHistory from '../components/RecordHistory.vue';
 const formProfile = ref(false);
 const addTransaction = ref(true);
+const store = auth();
 const $q = useQuasar();
 const formInput = ref({conditions: []});
 const submitting = ref(false);
@@ -693,6 +695,14 @@ const conditions = ref([
   { label: 'Tuberculosis', value: 'tuberculosis', color: 'green' },
   { label: 'Others', value: 'others', color: 'green' }
 ]);
+
+
+const hasPermission = (authority) => {
+  if (store.roles.includes(authority)) {
+    return true;
+  }
+  return false;
+};
 
 
 

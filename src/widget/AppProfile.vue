@@ -27,10 +27,8 @@
             </q-item-section>
 
             <q-item-section>
-              <!-- <q-item-label> {{ userProfile.first_name }}</q-item-label>
-              <q-item-label caption lines="1">
-                {{ userProfile.email }}</q-item-label
-              > -->
+              <q-item-label> {{ userName }}</q-item-label>
+              
             </q-item-section>
           </q-item>
           <q-separator></q-separator>
@@ -75,6 +73,7 @@ const authInstance = auth();
 const $q = useQuasar();
 const router = useRouter();
 // const userProfile = ref({});
+const userName = ref(authInstance.authUser.userName);
 // const userId = ref(authInstance.authUser.id);
 // const userDetails = ref(authInstance.authUser);
 const loggingOut = ref(false);
