@@ -51,7 +51,7 @@
           @click="addSchedule"
           class="q-mt-md q-mb-md drawerActive text-white"
         />
-        <q-dialog v-model="formSchedule" persistent transition-show="flip-down" @hide="onHide">
+        <q-dialog v-model="formSchedule" persistent transition-show="scale" @hide="onHide">
       <q-card style="width: 650px; max-width: 80vw">
         <q-toolbar>
          

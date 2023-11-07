@@ -8,7 +8,7 @@ export default {
 
     
       try {
-        const response = await api.get("api/patients"); // Use the 'api' instance here
+        const response = await api.get("api/patient"); // Use the 'api' instance here
         if (response) {
         
           return response.data;
@@ -27,7 +27,7 @@ export default {
       
       
       try {
-        const response = await api.post("api/register", patientDetails ); // Use the 'api' instance here
+        const response = await api.post("api/patient", patientDetails ); // Use the 'api' instance here
         if (response) {
           
           return response.data;

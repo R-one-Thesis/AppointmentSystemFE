@@ -10,7 +10,7 @@
       <q-dialog
         v-model="formProfile"
         persistent
-        transition-show="flip-down"
+        transition-show="scale"
         @hide="onHide"
       >
         <q-card style="width: 1000px; max-width: 80vw">
@@ -344,6 +344,7 @@
                       v-model="formInput.physician"
                       label="Physician"
                       lazy-rules
+                      :readonly="viewing != false"
 
                     />
                   </div>
@@ -356,6 +357,7 @@
                       v-model="formInput.physaddress"
                       label="Physician Address"
                       lazy-rules
+                      :readonly="viewing != false"
 
                     />
                   </div>
@@ -371,6 +373,7 @@
                       label="Reason"
                       lazy-rules
                       style="resize: none;"
+                      :readonly="viewing != false"
 
                     />
                   </div>
@@ -390,17 +393,15 @@
                       label="Hospitalization"
                       lazy-rules
                       style="resize: none;"
-
+                      :readonly="viewing != false"
                     />
                   </div>
                   <div class="q-col col-12 col-sm-12 col-md-12">
                     <span
                       >Please check if you have or had any of the following:</span>
                   </div>
-                  <div
-                  class="q-col col-12 col-sm-12 col-md-12"
-                        
-                        >
+                  <!-- {{ formInput }} -->
+                  <div class="q-col col-12 col-sm-12 col-md-12">
                         <q-option-group
                         :options="conditions"
                         option-value="value"
@@ -409,7 +410,10 @@
                         v-model="formInput.conditions"
                         :rules="[rules.requiredSelection]"
                         dense
+                        map-options
+                        emit-value
                         style="display:grid; align-items: center; grid-template-columns: 1fr 1fr 1fr;"
+                        :disable="viewing != false"
                       />
                 </div>
                 <div class="q-col col-12 col-sm-12 col-md-12">
@@ -428,6 +432,7 @@
                       label="Medication"
                       lazy-rules
                       style="resize: none;"
+                      :readonly="viewing != false"
 
                     />
                   </div>
@@ -447,17 +452,18 @@
                       label="Allergies"
                       lazy-rules
                       style="resize: none;"
+                      :readonly="viewing != false"
 
                     />
                   </div>
-                  <div class="q-col col-12 col-sm-12 col-md-12">
+                  <div class="q-col col-12 col-sm-12 col-md-12" v-if="formInput.sex == 'Female'">
                       <span class="text-bold" style="font-size: 20px;"
                         >For Women Only</span>
                       <p>Are you pregnant?</p>
-                      <q-radio v-model="formInput.pregnant" val="yes" label="Yes" />
-                      <q-radio v-model="formInput.pregnant" val="no" label="No" />
+                      <q-radio v-model="formInput.pregnant" val="yes" label="Yes" :disable="viewing != false"/>
+                      <q-radio v-model="formInput.pregnant" val="no" label="No" :disable="viewing != false"/>
                   </div>
-                  <div class="q-col col-12 col-sm-12 col-md-12">
+                  <div class="q-col col-12 col-sm-12 col-md-12" v-if="formInput.sex == 'Female'">
                    <q-input
                      class="custom-input"
                      outlined
@@ -468,16 +474,17 @@
                     :placeholder="ph"
                      label="Expected Delivery"
                      lazy-rules
+                     :readonly="viewing != false"
                    />
 
                  </div>
-                 <div class="q-col col-12 col-sm-12 col-md-12">
+                 <div class="q-col col-12 col-sm-12 col-md-12" v-if="formInput.sex == 'Female'">
                     <span
                       >Do you have any problems associated with your menstrual period?</span>
                   </div>
-                  <div class="q-col col-12 col-sm-6 col-md-12">
-                      <q-radio v-model="formInput.mens_problems" val="yes" label="Yes"  />
-                      <q-radio v-model="formInput.mens_problems" val="no" label="No"  />
+                  <div class="q-col col-12 col-sm-6 col-md-12" v-if="formInput.sex == 'Female'">
+                      <q-radio v-model="formInput.mens_problems" val="yes" label="Yes"  :disable="viewing != false"/>
+                      <q-radio v-model="formInput.mens_problems" val="no" label="No"  :disable="viewing != false"/>
 
                   </div>
                   
@@ -666,7 +673,7 @@ const selectSex = [
 ]
 
 const conditions = ref([
-  { label: 'AIDS', value: 'aids' },
+  { label: 'AIDS', value: 'aids', color: 'green' },
   { label: 'Anemia', value: 'anemia', color: 'green' },
   { label: 'Asthma', value: 'asthma', color: 'green' },
   { label: 'Bleeding Tendency', value: 'bleeding_tendency', color: 'green' },
@@ -768,6 +775,7 @@ const columns = [
 
 
 const AddPatient = () => {
+  formInput.value.conditions = [];
   formProfile.value = true;
   addTransaction.value = true;
   editMode.value = false;
@@ -776,6 +784,7 @@ const AddPatient = () => {
 
 
 const EditRecord = (val) => {
+  formInput.value.conditions = [];
   formInput.value = val.row;
   formProfile.value = true;
   editMode.value = true;
@@ -795,6 +804,7 @@ const onHide = () => {
 
 
 const viewForm = (val) => {
+  formInput.value = {conditions: []};
   formInput.value = val.row;
   viewing.value = true;
   formProfile.value = true;
@@ -802,7 +812,7 @@ const viewForm = (val) => {
 };
 
 const onReset = () => {
-  // formInput.value = {}
+  formInput.value.conditions = [];
   // loadData();
 };
 
@@ -860,6 +870,10 @@ const DeleteRecord = (val) => {
 const onSubmit = (val) => {
   // add
 
+  // if (!Array.isArray(formInput.conditions)) {
+  //   formInput.conditions = [formInput.conditions];
+  // }
+
   if (addTransaction.value) {
     console.log(formInput);
     submitting.value = true;
@@ -886,8 +900,10 @@ const onSubmit = (val) => {
             message: "New Patient has been saved!",
           });
           onReset();
+          loadData();
           submitting.value = false;
           formProfile.value = false;
+
         }
       })
       .catch((error) => {
@@ -964,7 +980,7 @@ const loadData = () => {
         return;
       }
       console.log(response);
-      tablerows.value = response.patiens;
+      tablerows.value = response.data;
       loading.value = false;
     })
     .catch(() => {

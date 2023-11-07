@@ -9,7 +9,7 @@
       <q-dialog
         v-model="formProfile"
         persistent
-        transition-show="flip-down"
+        transition-show="scale"
         @hide="onHide"
       >
         <q-card style="width: 1000px; max-width: 80vw">
@@ -19,7 +19,7 @@
               </q-avatar> -->
             <q-toolbar-title
               ><span class="text-weight-bold"
-                >Patient Details</span
+                >User Details</span
               ></q-toolbar-title
             >
             <q-btn flat round dense icon="close" v-close-popup />
@@ -138,7 +138,7 @@
                   </div>
                   
                   
-                  <div class="q-col col-12 col-sm-6 col-md-4">
+                  <div class="q-col col-12 col-sm-6 col-md-6">
                    
 
                     <q-input
@@ -156,22 +156,8 @@
                     />
 
                   </div>
-                  <div class="q-col col-12 col-sm-6 col-md-4">
-                    <q-select
-                      class="custom-input-select col-5"
-                      outlined
-                      v-model="formInput.sex"
-                      :options="selectSex"
-                      map-options
-                      option-value="sex"
-                      option-label="value"
-                      label="Sex"
-                      dense
-                      :readonly="viewing != false"
-                    />
-                  </div>
-
-                  <div class="q-col col-12 col-sm-6 col-md-4">
+                  
+                  <div class="q-col col-12 col-sm-6 col-md-6">
                     <q-input
                       class="custom-input"
                       outlined
@@ -343,7 +329,7 @@
 import { ref, watch, computed } from "vue";
 import { exportFile, useQuasar } from "quasar";
 import { auth } from "../../stores/auth";
-// import api from "./API";
+import api from "./API";
 
 const formProfile = ref(false);
 const addTransaction = ref(true);
@@ -378,9 +364,156 @@ const rules = ref({
     "Mobile number must be valid. Ex. starts with (09) followed by xxxxxxxxx, where x = numeric character only",
 });
 
+const selectExtenstion = [
+   'Jr', 'Sr', 'III', 'IV'
+];
+
+const columns = [
+  {
+    align: "left",
+    label: "Name",
+    field: (row) =>
+      row.first_name + " " + (row.middle_name ?? "") + " " + row.last_name + " " + row.extension_name,
+    name: "Name",
+    sortable: true,
+  },
+
+ 
+  {
+    align: "left",
+    label: "Birthday",
+    field: "Birthday",
+    field: (row) => row.birthday,
+    name: "Birthday",
+    sortable: true,
+  },
+  {
+    align: "left",
+    label: "Sex",
+    field: "Sex",
+    field: (row) => row.sex,
+    name: "Sex",
+    sortable: true,
+  },
+  {
+    align: "left",
+    label: "Religion",
+    field: "Religion",
+    field: (row) => row.religion,
+    name: "Religion",
+    sortable: true,
+  },
+  {
+    align: "left",
+    label: "Home Address",
+    field: "Home Address",
+    field: (row) => row.home_address,
+    name: "Home Address",
+    sortable: true,
+  },
+
+  
+  {
+    align: "left",
+    label: "Mobile Number",
+    field: "Mobile Number",
+    field: (row) => row.mobile_number,
+    name: "Mobile Number",
+    sortable: true,
+  },
+  
+ 
+  { name: "actions", label: "Action", align: "center", style: "width:0px;" },
+];
+
+
 const AddUser = () => {
   formProfile.value = true;
 
 };
+
+const onReset = () => {
+  // formInput.value = {}
+  // loadData();
+};
+
+
+const onSubmit = (val) => {
+  // add
+
+  if (addTransaction.value) {
+    console.log(formInput);
+    submitting.value = true;
+    api
+    .addAdmin(formInput.value)
+      .then((response) => {
+        console.log(response);
+        if (response.data?.error || response.data?.message) {
+          $q.notify({
+            color: "negative",
+            position: "top",
+            message:
+              JSON.stringify(response.data?.error) ??
+              JSON.stringify(response.data?.message) ??
+              "Failed to Add Admin",
+            icon: "report_problem",
+          });
+          submitting.value = false;
+        } else {
+          $q.notify({
+            color: "green-4",
+            textColor: "white",
+            icon: "cloud_done",
+            message: "New Admin has been saved!",
+          });
+          onReset();
+          submitting.value = false;
+          formProfile.value = false;
+        }
+      })
+      .catch((error) => {
+        $q.notify({
+          color: "negative",
+          position: "top",
+          message: error.message ?? "Failed to add Admin",
+          icon: "report_problem",
+        });
+        submitting.value = false;
+      });
+  } 
+};
+
+
+const loadData = () => {
+  loading.value = true;
+  api
+    .viewAllAdmin()
+    .then((response) => {
+      if (response == "401") {
+        $q.notify({
+          color: "negative",
+          position: "top",
+          message: "Unauthenticated",
+          icon: "report_problem",
+        });
+        loading.value = false;
+        return;
+      }
+      console.log(response);
+      tablerows.value = response.data;
+      loading.value = false;
+    })
+    .catch(() => {
+      $q.notify({
+        color: "negative",
+        position: "top",
+        message: "Loading failed",
+        icon: "report_problem",
+      });
+      loading.value = false;
+    });
+
+};
+loadData();
 
 </script>
