@@ -27,12 +27,23 @@ export const auth = defineStore('user', {
         try {
             const data = await api.post("api/login", userDetails)
             console.log(data.data)
+            if(data.data.user_name){
 
-            this.user_name = data.data.user_name;
-            this.user_type = data.data.user_type;
+              this.authUser = 
+              {userName: data.data.user_name,
+               usertype: data.data.user_type, 
+             
+              };
+              if(data.data.user_type){
+                this.roles = []
+                this.roles.push(data.data.user_type.toUpperCase())
 
-            this.token = data.data.token;
-                
+              }
+           
+              this.token = data.data.token;
+              
+             
+          }
                
             // this.authUser = data.data;
             return data.data;

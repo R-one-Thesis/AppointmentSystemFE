@@ -12,7 +12,16 @@
                             <q-card-section class="full-height flex column justify-center q-p-lg">
                                 <div class="flex column items-center justify-center q-mb-lg">
                                     <div class="text-h4 text-uppercase q-my-none text-weight-bold text-primary q-mb-sm text-center">
-                                        Dental Clinic Online Appointment System Registration form</div>
+                                        <div class="logo-container">
+                                            <!-- Your company logo goes here -->
+                                            <img 
+                                            alt="Quasar logo"
+                                            src="~assets/smile.png"
+                                            class="logo" 
+                                            style="width: 180px;"
+                                            />
+                                        </div>
+                                    </div>
                                     <a class="mt-4" href="#/Login">Login here</a>
                                 </div>
                                 <q-form @submit="onSubmit" @reset="onReset" class="q-gutter-sd">
@@ -219,7 +228,7 @@ const selectExtenstion = [
 
 
 const onReset = () => {
-  formInput.value = {}
+//   formInput.value = {}
   // loadData();
 };
 
@@ -253,7 +262,7 @@ const onSubmit = (val) => {
           });
           onReset();
           submitting.value = false;
-          formSchedule.value = false;
+        //   formSchedule.value = false;
         }
       })
       .catch((error) => {
@@ -276,7 +285,7 @@ const onSubmit = (val) => {
         /* margin: 0 20px; */
     }
     .form-card {
-        width: 45vw;
+        width: 50vw;
         margin: 0 auto;
     }
 

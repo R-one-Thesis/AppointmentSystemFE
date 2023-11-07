@@ -11,7 +11,7 @@
         <!-- Your company logo goes here -->
         <img 
           alt="Quasar logo"
-          src="~assets/ronelogo.png"
+          src="~assets/smile.png"
           class="logo" 
           style="width: 200px;"
         />

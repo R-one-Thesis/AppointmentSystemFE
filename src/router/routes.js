@@ -30,6 +30,20 @@ const routes = [
         ]
       },
 
+      {
+        path: '/',
+        meta: { label: 'Users', icon: 'group', roles: ['ADMIN'] }, // Group label and icon
+        children: [
+          {
+            path: '/Users', 
+            component: () => import('pages/Users/Users.vue'),
+            name: 'Users',
+            meta: { icon: 'fas fa-users', roles: ['ADMIN'] }
+          },
+          // Add more routes for the Management group here
+        ]
+      },
+
       // {
       //   path: '/',
       //   meta: { label: 'Users', icon: 'group', roles: ['ADMIN', 'VIEW_USERS'] }, // Group label and icon

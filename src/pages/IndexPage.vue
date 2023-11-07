@@ -51,7 +51,7 @@
           @click="addSchedule"
           class="q-mt-md q-mb-md drawerActive text-white"
         />
-        <q-dialog v-model="formSchedule" persistent transition-show="flip-down" @hide="onHide">
+        <q-dialog v-model="formSchedule" persistent transition-show="scale" @hide="onHide">
       <q-card style="width: 650px; max-width: 80vw">
         <q-toolbar>
          
@@ -186,12 +186,17 @@
             <div v-if="scheduleDialogData">
               <div><strong>Doctor:</strong> {{ scheduleDialogData.doctor }}</div>
               <div><strong>Specialization:</strong> {{ scheduleDialogData.details }}</div>
-              <div><strong>Services:</strong> {{ scheduleDialogData.services }}</div>
+              <div><strong>Services: </strong>
+                <span v-for="(service, index) in scheduleDialogData.services" :key="index">
+                   {{ getServiceDisplayName(service) }}
+                  <!-- Add a comma and space after each service except the last one -->
+                  <span v-if="index < scheduleDialogData.services.length - 1">, </span>
+                </span>
+              </div>
               <div><strong>Date:</strong> {{ scheduleDialogData.date }}</div>
               <div><strong>Time:</strong> {{ scheduleDialogData.time }}</div>
               <div><strong>Duration:</strong> {{ scheduleDialogData.duration }} minutes</div>
               <div><strong>Status:</strong> {{ scheduleDialogData.booked === 0 ? 'Available' : 'Already booked' }}</div>
-
             </div>
           </q-card-section>
         </q-card>
@@ -259,6 +264,21 @@ const fetchSchedules = () => {
     });
 };
 
+
+const getServiceDisplayName = (service) => {
+  const serviceNames = {
+    dental_restoration: 'Dental Restoration',
+    tooth_extract: 'Tooth Extraction',
+    dentures: 'Dentures',
+    odontectomy: 'Odontectomy',
+    root_canal: 'Root Canal',
+    braces: 'Braces',
+    jacket_crown: 'Jacket Crown',
+    oral_prophylaxis: 'Oral Prophylaxis',
+    consultation: 'Consultation',
+  };
+  return serviceNames[service] || service;
+};
 
 
 
