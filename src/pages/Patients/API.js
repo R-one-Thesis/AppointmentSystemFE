@@ -44,7 +44,7 @@ export default {
         
       }
       try {
-        const response = await api.put("api/update-patients/"+patientDetails.id,patientDetails ); // Use the 'api' instance here
+        const response = await api.put("api/patient/"+patientDetails.id,patientDetails ); // Use the 'api' instance here
         if (response) {
           return response.data;
         }
@@ -60,7 +60,7 @@ export default {
         
       }
       try {
-        const response = await api.delete("api/delete-patient/"+patientDetails.id,patientDetails); // Use the 'api' instance here
+        const response = await api.delete("api/patient/"+patientDetails.id,patientDetails); // Use the 'api' instance here
         if (response) {
           return response.data;
         }

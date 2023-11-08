@@ -37,6 +37,38 @@ export default {
         return error.response;
       }
     },
+
+    async updateAdmin(adminDetails) {
+      const body = {
+        
+        
+      }
+      try {
+        const response = await api.put("api/admin/"+adminDetails.id,adminDetails ); // Use the 'api' instance here
+        if (response) {
+          return response.data;
+        }
+      } catch (error) {
+        console.log(error);
+        return error.response;
+      }
+    },
+
+    async deleteAdmin(adminDetails) {
+      const body = {
+        
+        
+      }
+      try {
+        const response = await api.delete("api/admin/"+adminDetails.id,adminDetails); // Use the 'api' instance here
+        if (response) {
+          return response.data;
+        }
+      } catch (error) {
+        console.log(error);
+        return error.response;
+      }
+    },
   
    
   };
