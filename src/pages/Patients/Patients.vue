@@ -389,7 +389,7 @@
                       type="textarea"
                       dense
                       stack-label
-                      v-model="formInput.hospitalization"
+                      v-model="formInput.hospitalization_reason"
                       label="Hospitalization"
                       lazy-rules
                       style="resize: none;"
@@ -804,7 +804,8 @@ const onHide = () => {
 
 
 const viewForm = (val) => {
-  formInput.value = {conditions: []};
+  // formInput.value = {conditions: []};
+  formInput.value.conditions = [];
   formInput.value = val.row;
   viewing.value = true;
   formProfile.value = true;
@@ -812,7 +813,7 @@ const viewForm = (val) => {
 };
 
 const onReset = () => {
-  formInput.value.conditions = [];
+  // formInput.value.conditions = [];
   // loadData();
 };
 

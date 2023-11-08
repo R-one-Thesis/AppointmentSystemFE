@@ -5,6 +5,8 @@ export const auth = defineStore('user', {
     authUser: null,
     token: null,
     roles: null,
+    admin_id: null,
+    patient_id: null,
     darkMode: false,
   }),
   persist: {
@@ -27,13 +29,23 @@ export const auth = defineStore('user', {
         try {
             const data = await api.post("api/login", userDetails)
             console.log(data.data)
+            if(data.data.user_type == 'patient') {
+              this.patient_id = data.data.patient_id
+            }
+            if(data.data.admin_id) {
+              this.admin_id = data.data.admin_id
+              console.log(data.data.admin_id)
+            }
             if(data.data.user_name){
 
               this.authUser = 
               {userName: data.data.user_name,
-               usertype: data.data.user_type, 
+               usertype: data.data.user_type,
              
               };
+             
+
+          
               if(data.data.user_type){
                 this.roles = []
                 this.roles.push(data.data.user_type.toUpperCase())

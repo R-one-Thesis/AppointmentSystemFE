@@ -16,7 +16,7 @@ const routes = [
 
       {
         path: '/',
-        meta: { label: 'Patients', icon: 'group', roles: ['any'] }, // Group label and icon
+        meta: { label: 'Patients', icon: 'group', roles: ['ADMIN'] }, // Group label and icon
         children: [
           {
             path: '/Patients', 
@@ -44,19 +44,19 @@ const routes = [
         ]
       },
 
-      // {
-      //   path: '/',
-      //   meta: { label: 'Users', icon: 'group', roles: ['ADMIN', 'VIEW_USERS'] }, // Group label and icon
-      //   children: [
-      //     {
-      //       path: '/User-Management', 
-      //       component: () => import('pages/Users/Users.vue'),
-      //       name: 'Users',
-      //       meta: { icon: 'fas fa-users', roles: ['ADMIN', 'VIEW_USERS'] }
-      //     },
-      //     // Add more routes for the Management group here
-      //   ]
-      // },
+      {
+        path: '/',
+        meta: { label: 'Profile', icon: 'group', roles: ['PATIENT'] }, // Group label and icon
+        children: [
+          {
+            path: '/Profile', 
+            component: () => import('pages/Profile/Profile.vue'),
+            name: 'My Profile',
+            meta: { icon: 'fas fa-users', roles: ['PATIENT'] }
+          },
+          // Add more routes for the Management group here
+        ]
+      },
 
    
       

@@ -46,5 +46,21 @@ export default {
     }
   },
 
+  async updateSchedule(schedDetails) {
+    const body = {
+      
+      
+    }
+    try {
+      const response = await api.put("api/book-schedules/"+schedDetails ); // Use the 'api' instance here
+      if (response) {
+        return response.data;
+      }
+    } catch (error) {
+      console.log(error);
+      return error.response;
+    }
+  },
+
  
 };

@@ -171,7 +171,7 @@
                     />
                   </div>
 
-                  <div class="q-col col-12 col-sm-6 col-md-4">
+                  <!-- <div class="q-col col-12 col-sm-6 col-md-4">
                     <q-input
                       class="custom-input"
                       outlined
@@ -183,7 +183,7 @@
                       v-if="editMode || viewing"
                       :readonly="viewing != false"
                     />
-                  </div>
+                  </div> -->
 
                   
                 
@@ -429,12 +429,92 @@ const columns = [
 
 const AddUser = () => {
   formProfile.value = true;
+  addTransaction.value = true;
+  recordViewing.value = false;
 
+};
+
+const EditRecord = (val) => {
+  formInput.value.conditions = [];
+  formInput.value = val.row;
+  formProfile.value = true;
+  editMode.value = true;
+  addTransaction.value = false;
+};
+
+const onHide = () => {
+  if (editMode.value) {
+    formInput.value = {};
+  }
+  if (viewing.value) {
+    formInput.value = {};
+  }
+  viewing.value = false;
+
+};
+
+const viewForm = (val) => {
+  formInput.value = val.row;
+  viewing.value = true;
+  formProfile.value = true;
+  
 };
 
 const onReset = () => {
   // formInput.value = {}
   // loadData();
+};
+
+
+const DeleteRecord = (val) => {
+  $q.dialog({
+    title: "Delete Record",
+    message:
+      "Are you sure you want to delete, user: " +
+      val.row.first_name +
+
+      "?",
+    cancel: true,
+  }).onOk(() => {
+    deleting.value = true;
+    api
+      .deleteAdmin(val.row)
+      .then((response) => {
+        console.log(response);
+        if (response.data?.error || response.data?.message) {
+          $q.notify({
+            color: "negative",
+            position: "top",
+            message:
+              JSON.stringify(response.data?.error) ??
+              JSON.stringify(response.data?.message) ??
+              "Failed to Delete User",
+            icon: "report_problem",
+          });
+          deleting.value = false;
+        } else {
+          // Error response
+          $q.notify({
+            color: "green-4",
+            textColor: "white",
+            icon: "cloud_done",
+            message: "Record has been deleted!",
+          });
+          deleting.value = false;
+          formProfile.value = false;
+          loadData();
+        }
+      })
+      .catch((error) => {
+        $q.notify({
+          color: "negative",
+          position: "top",
+          message: error.message ?? "Failed to Delete User",
+          icon: "report_problem",
+        });
+        deleting.value = false;
+      });
+  });
 };
 
 
@@ -467,6 +547,7 @@ const onSubmit = (val) => {
             message: "New Admin has been saved!",
           });
           onReset();
+          loadData();
           submitting.value = false;
           formProfile.value = false;
         }
@@ -480,7 +561,52 @@ const onSubmit = (val) => {
         });
         submitting.value = false;
       });
-  } 
+  }  else {
+    $q.dialog({
+      title: "Edit Admin Record",
+      message: "Are you sure you want to update?",
+      cancel: true,
+    }).onOk(() => {
+      submitting.value = true;
+      api
+        .updateAdmin(formInput.value)
+        .then((response) => {
+          console.log(response);
+          if (response.data?.error || response.data?.message) {
+            $q.notify({
+              color: "negative",
+              position: "top",
+              message:
+                JSON.stringify(response.data?.error) ??
+                JSON.stringify(response.data?.message) ??
+                "Failed to Update Admin",
+              icon: "report_problem",
+            });
+            submitting.value = false;
+          } else {
+            // Error response
+            $q.notify({
+              color: "green-4",
+              textColor: "white",
+              icon: "cloud_done",
+              message: "Admin has been updated!",
+            });
+            submitting.value = false;
+            formProfile.value = false;
+            onReset();
+          }
+        })
+        .catch((error) => {
+          $q.notify({
+            color: "negative",
+            position: "top",
+            message: error.message ?? "Failed to Update Admin",
+            icon: "report_problem",
+          });
+          submitting.value = false;
+        });
+    });
+  }
 };
 
 

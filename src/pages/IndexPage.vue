@@ -50,6 +50,7 @@
           label="Add Schedule (+)"
           @click="addSchedule"
           class="q-mt-md q-mb-md drawerActive text-white"
+          v-if="hasPermission('ADMIN')"
         />
         <q-dialog v-model="formSchedule" persistent transition-show="scale" @hide="onHide">
       <q-card style="width: 650px; max-width: 80vw">
@@ -197,6 +198,16 @@
               <div><strong>Time:</strong> {{ scheduleDialogData.time }}</div>
               <div><strong>Duration:</strong> {{ scheduleDialogData.duration }} minutes</div>
               <div><strong>Status:</strong> {{ scheduleDialogData.booked === 0 ? 'Available' : 'Already booked' }}</div>
+                <div class="row justify-start" v-if="scheduleDialogData.booked == false">
+                  <q-btn
+                    label="Book now"
+                    class="q-mt-md q-mb-md drawerActive text-white"
+                    @click="bookNow"
+                    v-model="scheduleDialogData.id"
+                    v-if="hasPermission('PATIENT')"
+
+                  />
+                </div>
             </div>
           </q-card-section>
         </q-card>
@@ -217,6 +228,8 @@ import { ref, computed, onMounted, reactive } from 'vue';
 import { exportFile, useQuasar, copyToClipboard } from "quasar";
 import NavigationBar from '../components/NavigationBar.vue';
 const $q = useQuasar();
+import { auth } from "../stores/auth";
+const store = auth();
 
 const formProfile = ref(false);
 const schedules = ref([]);
@@ -482,6 +495,13 @@ const getDoctors = () => {
     });
 };
 
+const hasPermission = (authority) => {
+  if (store.roles.includes(authority)) {
+    return true;
+  }
+  return false;
+};
+
 // const getSchedule = () => {
 //   api
 //     .viewAllSched()
@@ -555,6 +575,53 @@ const onSubmit = (val) => {
       });
   } 
 };
+
+const bookNow = (val) => {
+  $q.dialog({
+      title: "Book Now",
+      message: "Are you sure you want to book a schedule?",
+      cancel: true,
+    }).onOk(() => {
+      // submitting.value = true;
+      api
+        .updateSchedule(scheduleDialogData.value.id)
+        .then((response) => {
+          console.log(response);
+          if (response.data?.error || response.data?.message) {
+            $q.notify({
+              color: "negative",
+              position: "top",
+              message:
+                JSON.stringify(response.data?.error) ??
+                JSON.stringify(response.data?.message) ??
+                "Failed to Update Admin",
+              icon: "report_problem",
+            });
+            // submitting.value = false;
+          } else {
+            // Error response
+            $q.notify({
+              color: "green-4",
+              textColor: "white",
+              icon: "cloud_done",
+              message: "Booked successfully!",
+            });
+            // submitting.value = false;
+            // formProfile.value = false;
+            // onReset();
+          }
+        })
+        .catch((error) => {
+          $q.notify({
+            color: "negative",
+            position: "top",
+            message: error.message ?? "Failed to Book a Schedule",
+            icon: "report_problem",
+          });
+          // submitting.value = false;
+        });
+    });
+}
 
 getDoctors();
 fetchSchedules();
