@@ -181,7 +181,7 @@
                       v-model="formInput.mobile_number"
                       label="Mobile Number"
                       lazy-rules
-                      :rules="[rules.requiredField, rules.mobileNumber]"
+                      :rules="[rules.mobileNumber]"
                       :readonly="viewing != false"
                     />
                   </div>
@@ -456,13 +456,16 @@
 
                     />
                   </div>
+                  <!-- {{ formInput.pregnant.trim() }} -->
                   <div class="q-col col-12 col-sm-12 col-md-12" v-if="formInput.sex == 'Female'">
                       <span class="text-bold" style="font-size: 20px;"
                         >For Women Only</span>
                       <p>Are you pregnant?</p>
-                      <q-radio v-model="formInput.pregnant" val="yes" label="Yes" :disable="viewing != false"/>
-                      <q-radio v-model="formInput.pregnant" val="no" label="No" :disable="viewing != false"/>
+                      <q-radio v-model="formInput.pregnant" :val=true label="Yes" :disable="viewing !== false"/>
+                      <q-radio v-model="formInput.pregnant" :val=false label="No" :disable="viewing !== false"/>
+
                   </div>
+                  {{ formInput }}
                   <div class="q-col col-12 col-sm-12 col-md-12" v-if="formInput.sex == 'Female'">
                    <q-input
                      class="custom-input"
@@ -483,8 +486,8 @@
                       >Do you have any problems associated with your menstrual period?</span>
                   </div>
                   <div class="q-col col-12 col-sm-6 col-md-12" v-if="formInput.sex == 'Female'">
-                      <q-radio v-model="formInput.mens_problems" val="yes" label="Yes"  :disable="viewing != false"/>
-                      <q-radio v-model="formInput.mens_problems" val="no" label="No"  :disable="viewing != false"/>
+                      <q-radio v-model="formInput.mens_problems" :val=true label="Yes"  :disable="viewing != false"/>
+                      <q-radio v-model="formInput.mens_problems" :val=false label="No"  :disable="viewing != false"/>
 
                   </div>
                   
@@ -789,6 +792,18 @@ const EditRecord = (val) => {
   formProfile.value = true;
   editMode.value = true;
   addTransaction.value = false;
+
+  if(formInput.value.pregnant == 1) {
+    formInput.value.pregnant = true
+  }else{
+    formInput.value.pregnant = false
+  }
+
+  if(formInput.value.mens_problems == 1) {
+    formInput.value.mens_problems = true
+  }else{
+    formInput.value.mens_problems = false
+  }
 };
 
 const onHide = () => {
@@ -809,6 +824,18 @@ const viewForm = (val) => {
   formInput.value = val.row;
   viewing.value = true;
   formProfile.value = true;
+
+  if(formInput.value.pregnant == 1) {
+    formInput.value.pregnant = true
+  }else{
+    formInput.value.pregnant = false
+  }
+
+  if(formInput.value.mens_problems == 1) {
+    formInput.value.mens_problems = true
+  }else{
+    formInput.value.mens_problems = false
+  }
   
 };
 
@@ -874,6 +901,7 @@ const onSubmit = (val) => {
   // if (!Array.isArray(formInput.conditions)) {
   //   formInput.conditions = [formInput.conditions];
   // }
+
 
   if (addTransaction.value) {
     console.log(formInput);
