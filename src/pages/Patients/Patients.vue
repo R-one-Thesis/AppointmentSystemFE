@@ -465,7 +465,6 @@
                       <q-radio v-model="formInput.pregnant" :val=false label="No" :disable="viewing !== false"/>
 
                   </div>
-                  {{ formInput }}
                   <div class="q-col col-12 col-sm-12 col-md-12" v-if="formInput.sex == 'Female'">
                    <q-input
                      class="custom-input"
