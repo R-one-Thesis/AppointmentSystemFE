@@ -4,25 +4,25 @@
       <div class="patient-details" v-if="patientDetails">
         <div class="card">
           <h5>Patient Details</h5>
-          <p>Fullname: {{ patientDetails.fullname }}</p>
-          <p>Birthday: {{ patientDetails.birthday }}</p>
-          <p>Sex: {{ patientDetails.sex }}</p>
-          <p>Home Address: {{ patientDetails.homeAddress }}</p>
-          <p>Mobile Number: {{ patientDetails.mobileNumber }}</p>
+          <p><b>Fullname:</b> {{ patientDetails.fullname }}</p>
+          <p><b>Birthday:</b> {{ patientDetails.birthday }}</p>
+          <p><b>Sex:</b> {{ patientDetails.sex }}</p>
+          <p><b>Home Address:</b> {{ patientDetails.homeAddress }}</p>
+          <p><b>Mobile Number:</b> {{ patientDetails.mobileNumber }}</p>
         </div>
         <div class="medical-record">
           <h5>Medical Record</h5>
           <div class="medical-details">
-            <p>Physician: {{ patientDetails.physician }}</p>
-            <p>Physician Address: {{ patientDetails.physicianAddress }}</p>
-            <p>Reason: {{ patientDetails.reason }}</p>
-            <p>Hospitalization: {{ patientDetails.hospitalization }}</p>
-            <p>Conditions: {{ patientDetails.conditions }}</p>
-            <p>Medication: {{ patientDetails.medication }}</p>
-            <p>Allergies: {{ patientDetails.allergies }}</p>
-            <p>Pregnant?: {{ patientDetails.pregnant }}</p>
-            <p>Expected Date: {{ patientDetails.expectedDate }}</p>
-            <p>Mens Problems: {{ patientDetails.mensProblems }}</p>
+            <p><b>Physician:</b> {{ patientDetails.physician }}</p>
+            <p><b>Physician Address:</b> {{ patientDetails.physicianAddress }}</p>
+            <p><b>Reason:</b> {{ patientDetails.reason }}</p>
+            <p><b>Hospitalization:</b> {{ patientDetails.hospitalization }}</p>
+            <p><b>Conditions:</b> {{ patientDetails.conditions }}</p>
+            <p><b>Medication:</b> {{ patientDetails.medication }}</p>
+            <p><b>Allergies:</b> {{ patientDetails.allergies }}</p>
+            <p><b>Pregnant?:</b> {{ patientDetails.pregnant }}</p>
+            <p><b>Expected Date:</b> {{ patientDetails.expectedDate }}</p>
+            <p><b>Mens Problems:</b> {{ patientDetails.mensProblems }}</p>
           </div>
         </div>
         <!-- <div class="booking-record">

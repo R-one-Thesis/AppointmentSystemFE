@@ -845,9 +845,9 @@ const onReset = () => {
 
 const DeleteRecord = (val) => {
   $q.dialog({
-    title: "Delete Record",
+    title: "Archive Patient",
     message:
-      "Are you sure you want to delete, profile: " +
+      "Are you sure you want to archive, profile: " +
       val.row.first_name +
 
       "?",

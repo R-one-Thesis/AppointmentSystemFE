@@ -32,6 +32,21 @@ const routes = [
 
       {
         path: '/',
+        meta: { label: 'Services', icon: 'group', roles: ['ADMIN'] }, // Group label and icon
+        children: [
+          {
+            path: '/Services', 
+            component: () => import('pages/Services/Services.vue'),
+            name: 'Services',
+            meta: { icon: 'fas fa-tooth', roles: ['any'] }
+          },
+        
+          
+        ]
+      },
+
+      {
+        path: '/',
         meta: { label: 'Users', icon: 'group', roles: ['ADMIN'] }, // Group label and icon
         children: [
           {

@@ -323,7 +323,7 @@
       </q-table>
     </div>
 
-  </template>
+</template>
 
 <script setup>
 import { ref, watch, computed } from "vue";

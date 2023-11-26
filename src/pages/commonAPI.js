@@ -46,13 +46,16 @@ export default {
     }
   },
 
-  async updateSchedule(schedDetails) {
-    const body = {
+  async updateSchedule(id, servicesDetails) {
+    console.log(servicesDetails);
+    
+    // const body = {
+    //   services: servicesDetails
       
-      
-    }
+    // }
     try {
-      const response = await api.put("api/book-schedules/"+schedDetails ); // Use the 'api' instance here
+      const response = await api.put("api/book-schedules/"+id,  servicesDetails); // Use the 'api' instance here
+      
       if (response) {
         return response.data;
       }
