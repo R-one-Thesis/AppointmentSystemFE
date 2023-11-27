@@ -1,7 +1,7 @@
 <template>
     <div class="q-pa-md">
     <q-btn
-        label="Add Services"
+        label="Add Doctor"
         @click="AddServices"
         class="q-mt-md q-mb-md bg-button1 text-white drawerActive"
       />
@@ -19,7 +19,7 @@
               </q-avatar> -->
             <q-toolbar-title
               ><span class="text-weight-bold"
-                >Services Details</span
+                >Doctor Details</span
               ></q-toolbar-title
             >
             <q-btn flat round dense icon="close" v-close-popup />
@@ -37,8 +37,8 @@
                       outlined
                       dense
                       stack-label
-                      v-model="formInput.service_type"
-                      label="Service Type"
+                      v-model="formInput.dentist"
+                      label="Dentist Name"
                       lazy-rules
                       :rules="[rules.requiredField]"
                       :readonly="viewing != false"
@@ -50,28 +50,45 @@
                       outlined
                       dense
                       stack-label
-                      v-model="formInput.price"
-                      label="Price"
+                      v-model="formInput.specialization"
+                      label="Specialization"
                       lazy-rules
-                      :rules="[rules.requiredField, rules.numeric]"
+                      :rules="[rules.requiredField]"
+                      :readonly="viewing != false"
+                    />
+                  </div>
+
+                  <div class="q-col col-12 col-sm-12 col-md-12">
+                    <q-input
+                      class="custom-input"
+                      outlined
+                      dense
+                      stack-label
+                      v-model="formInput.mobile_number"
+                      label="Mobile Number"
+                      lazy-rules
+                      :rules="[rules.requiredField, rules.mobileNumber]"
+                      :readonly="viewing != false"
+                    />
+                  </div>
+
+                  <div class="q-col col-12 col-sm-12 col-md-12">
+                    <q-input
+                      class="custom-input"
+                      outlined
+                      dense
+                      stack-label
+                      v-model="formInput.email"
+                      label="Email"
+                      lazy-rules
+                      :rules="[rules.requiredField, rules.properEmail]"
+                      v-if="addTransaction"
                       :readonly="viewing != false"
                     />
                   </div>
 
 
-                  <div class="q-col col-12 col-sm-12 col-md-12">
-                    <q-select
-                        class="custom-input-select col-5"
-                        outlined
-                        v-model="formInput.duration"
-                        :options="selectedDuration"
-                        map-options
-                        option-value="duration"
-                        option-label="value"
-                        label="Select Duration"
-                        dense
-                    />
-                  </div>
+
                   {{ formInput }}
   
                   
@@ -233,18 +250,13 @@ const rules = ref({
   requiredField: (v) => !!v || "Required field.",
   requiredSelection: (v) =>
     (!!v && v.length > 0) || "Required at least one selection",
-  numeric: (v) => !isNaN(parseFloat(v)) && isFinite(v) || "Must be a number",
+  mobileNumber: (v) =>
+    !v ||
+    /^(09)\d{9}$/.test(v) ||
+    "Mobile number must be valid. Ex. starts with (09) followed by xxxxxxxxx, where x = numeric character only",
 });
 
-const selectedDuration = [
-  { duration: 30, value: '30 mins' },
-  { duration: 60, value: '1 hour' },
-  { duration: 90, value: '1 hour and 30 mins' },
-];
 
-const selectedDurationValue = computed(() => {
-    return formInput.duration; // Removed the mapping
-});
 
 const AddServices = () => {
   formProfile.value = true;
@@ -288,28 +300,36 @@ const onReset = () => {
 const columns = [
   {
     align: "left",
-    label: "Service Type",
-    field: "Service Type",
-    field: (row) => row.service_type,
-    name: "Service Type",
+    label: "Dentist Name",
+    field: "Dentist Name",
+    field: (row) => row.dentist,
+    name: "Dentist Name",
     sortable: true,
   },
   {
     align: "left",
-    label: "Price",
-    field: "Price",
-    field: (row) => `₱${row.price}`,
-    name: "Price",
+    label: "Specialization",
+    field: "Specialization",
+    field: (row) => row.specialization,
+    name: "Specialization",
     sortable: true,
   },
   {
     align: "left",
-    label: "Duration",
-    field: (row) => `${Math.round(row.duration)} minutes`,
-    name: "Duration",
+    label: "Mobile Number",
+    field: "Mobile Number",
+    field: (row) => row.mobile_number,
+    name: "Mobile Number",
     sortable: true,
   },
-
+  {
+    align: "left",
+    label: "Email",
+    field: "Email",
+    field: (row) => row.email,
+    name: "Email",
+    sortable: true,
+  },
   
  
   { name: "actions", label: "Action", align: "center", style: "width:0px;" },
@@ -319,14 +339,12 @@ const columns = [
 const onSubmit = (val) => {
   // add
 
-  formInput.duration = Number(formInput.duration);
-  formInput.duration = Math.round(formInput.duration);
-  
+
   if (addTransaction.value) {
     console.log(formInput);
     submitting.value = true;
     api
-    .addServices(formInput.value)
+    .addDoctor(formInput.value)
       .then((response) => {
         console.log(response);
         if (response.data?.error || response.data?.message) {
@@ -364,13 +382,13 @@ const onSubmit = (val) => {
       });
   }  else {
     $q.dialog({
-      title: "Edit Services",
+      title: "Edit Doctor",
       message: "Are you sure you want to update?",
       cancel: true,
     }).onOk(() => {
       submitting.value = true;
       api
-        .updateService(formInput.value)
+        .updateDoctor(formInput.value)
         .then((response) => {
           console.log(response);
           if (response.data?.error || response.data?.message) {
@@ -380,7 +398,7 @@ const onSubmit = (val) => {
               message:
                 JSON.stringify(response.data?.error) ??
                 JSON.stringify(response.data?.message) ??
-                "Failed to Update Services",
+                "Failed to Update Doctor",
               icon: "report_problem",
             });
             submitting.value = false;
@@ -390,7 +408,7 @@ const onSubmit = (val) => {
               color: "green-4",
               textColor: "white",
               icon: "cloud_done",
-              message: "Services has been successfully updated!",
+              message: "Doctor has been successfully updated!",
             });
             submitting.value = false;
             formProfile.value = false;
@@ -402,7 +420,7 @@ const onSubmit = (val) => {
           $q.notify({
             color: "negative",
             position: "top",
-            message: error.message ?? "Failed to Update Services",
+            message: error.message ?? "Failed to Update Doctor",
             icon: "report_problem",
           });
           submitting.value = false;
@@ -413,17 +431,14 @@ const onSubmit = (val) => {
 
 const DeleteRecord = (val) => {
   $q.dialog({
-    title: "Delete Services",
+    title: "Delete Doctor",
     message:
-      "Are you sure you want to delete, service: " +
-      val.row.service_type +
-
-      "?",
+      "Are you sure you want to delete, doctor: " + val.row.dentist + "?",
     cancel: true,
   }).onOk(() => {
     deleting.value = true;
     api
-      .deleteService(val.row)
+      .deleteDoctor(val.row)
       .then((response) => {
         console.log(response);
         if (response.data?.error || response.data?.message) {
@@ -433,7 +448,7 @@ const DeleteRecord = (val) => {
             message:
               JSON.stringify(response.data?.error) ??
               JSON.stringify(response.data?.message) ??
-              "Failed to Delete Service",
+              "Failed to Delete Doctor",
             icon: "report_problem",
           });
           deleting.value = false;
@@ -443,7 +458,7 @@ const DeleteRecord = (val) => {
             color: "green-4",
             textColor: "white",
             icon: "cloud_done",
-            message: "Service has been succefully deleted!",
+            message: "Doctor has been succefully deleted!",
           });
           deleting.value = false;
           formProfile.value = false;
@@ -454,7 +469,7 @@ const DeleteRecord = (val) => {
         $q.notify({
           color: "negative",
           position: "top",
-          message: error.message ?? "Failed to Delete Service",
+          message: error.message ?? "Failed to Delete Doctor",
           icon: "report_problem",
         });
         deleting.value = false;
@@ -465,7 +480,7 @@ const DeleteRecord = (val) => {
 const loadData = () => {
   loading.value = true;
   api
-    .viewAllServices()
+    .viewAllDoctors()
     .then((response) => {
       if (response == "401") {
         $q.notify({
@@ -478,7 +493,7 @@ const loadData = () => {
         return;
       }
       console.log(response);
-      tablerows.value = response;
+      tablerows.value = response.dentist;
       loading.value = false;
     })
     .catch(() => {

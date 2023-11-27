@@ -4,10 +4,10 @@ const url = process.env.VUE_APP_API_URL;
 
 export default {
   
-  async addServices(serviceDetails) {
+  async addDoctor(doctorDetails) {
       
     try {
-      const response = await api.post("api/services", serviceDetails ); // Use the 'api' instance here
+      const response = await api.post("api/add-doctors", doctorDetails ); // Use the 'api' instance here
       if (response) {
         
         return response.data;
@@ -18,11 +18,11 @@ export default {
     }
   },
 
-  async viewAllServices() {
+  async viewAllDoctors() {
 
     
     try {
-      const response = await api.get("api/services"); // Use the 'api' instance here
+      const response = await api.get("api/view-doctors"); // Use the 'api' instance here
       if (response) {
       
         return response.data;
@@ -36,13 +36,13 @@ export default {
     }
   },
 
-  async updateService(serviceDetails) {
+  async updateDoctor(doctorDetails) {
     const body = {
       
       
     }
     try {
-      const response = await api.put("api/services/"+serviceDetails.id,serviceDetails ); // Use the 'api' instance here
+      const response = await api.put("api/edit-doctors/"+doctorDetails.id,doctorDetails ); // Use the 'api' instance here
       if (response) {
         return response.data;
       }
@@ -52,13 +52,13 @@ export default {
     }
   },
 
-  async deleteService(serviceDetails) {
+  async deleteDoctor(doctorDetails) {
     const body = {
       
       
     }
     try {
-      const response = await api.delete("api/services/"+serviceDetails.id,serviceDetails); // Use the 'api' instance here
+      const response = await api.delete("api/delete-doctors/"+doctorDetails.id,doctorDetails); // Use the 'api' instance here
       if (response) {
         return response.data;
       }
