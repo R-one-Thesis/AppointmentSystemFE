@@ -87,11 +87,7 @@
                     />
                   </div>
 
-
-
-                  {{ formInput }}
   
-                  
                 </div>
               </div>
   
