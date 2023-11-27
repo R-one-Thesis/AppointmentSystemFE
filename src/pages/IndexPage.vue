@@ -136,7 +136,7 @@
                  </div>
 
                 
-              <div class="q-col col-12 col-sm-6 col-md-12">
+              <!-- <div class="q-col col-12 col-sm-6 col-md-12">
                   <q-select
                     class="custom-input-select col-5"
                     outlined
@@ -147,9 +147,8 @@
                     option-label="value"
                     label="Select Duration"
                     dense
-                    :rules="[rules.requiredField]"
                   />
-                </div>
+                </div> -->
               </div>
             </div>
        
@@ -190,10 +189,31 @@
               <div><strong>Services: </strong>
                 <span v-for="(service, index) in scheduleDialogData.services" :key="index">
                    {{ getServiceDisplayName(service) }}
-                  <!-- Add a comma and space after each service except the last one -->
+           
                   <span v-if="index < scheduleDialogData.services.length - 1">, </span>
                 </span>
               </div>
+              <!-- <div v-if="hasPermission('PATIENT')" >
+              <q-label><b>Select a services:</b></q-label>
+              <div
+                class="q-col col-12 col-sm-12 col-md-12"
+                v-if="scheduleDialogData.booked == false"
+                  >
+                  <q-option-group
+                  :options="services"
+                  option-value="value"
+                  option-label="label"
+                  type="checkbox"
+                  v-model="formInput.services"
+                  :rules="[rules.requiredSelection]"
+                  dense
+                  map-options
+                  emit-value
+                  
+                />
+              </div>
+              </div> -->
+              <!-- {{ formInput }} -->
               <div><strong>Date:</strong> {{ scheduleDialogData.date }}</div>
               <div><strong>Time:</strong> {{ scheduleDialogData.time }}</div>
               <div><strong>Duration:</strong> {{ scheduleDialogData.duration }} minutes</div>
@@ -325,7 +345,7 @@ const selectedDurationValue = computed(() => {
 });
 
 const services = ref([
-  { label: 'Dental Restoration', value: 'dental_restoration' },
+  { label: 'Dental Restoration', value: 'dental_restoration', color: 'green' },
   { label: 'Tooth Extraction', value: 'tooth_extract', color: 'green' },
   { label: 'Odontectomy', value: 'odontectomy', color: 'green' },
   { label: 'Dentures', value: 'dentures', color: 'green' },
@@ -583,8 +603,9 @@ const bookNow = (val) => {
       cancel: true,
     }).onOk(() => {
       // submitting.value = true;
+     
       api
-        .updateSchedule(scheduleDialogData.value.id)
+        .updateSchedule(scheduleDialogData.value.id, { services: formInput.services })
         .then((response) => {
           console.log(response);
           if (response.data?.error || response.data?.message) {

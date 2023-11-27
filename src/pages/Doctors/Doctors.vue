@@ -1,8 +1,8 @@
 <template>
     <div class="q-pa-md">
     <q-btn
-        label="Add User (+)"
-        @click="AddUser"
+        label="Add Doctor"
+        @click="AddServices"
         class="q-mt-md q-mb-md bg-button1 text-white drawerActive"
       />
   
@@ -12,14 +12,14 @@
         transition-show="scale"
         @hide="onHide"
       >
-        <q-card style="width: 1000px; max-width: 80vw">
+        <q-card style="width: 500px; max-width: 80vw">
           <q-toolbar>
             <!-- <q-avatar>
                 <img src="https://cdn.quasar.dev/logo-v2/svg/logo.svg">
               </q-avatar> -->
             <q-toolbar-title
               ><span class="text-weight-bold"
-                >User Details</span
+                >Doctor Details</span
               ></q-toolbar-title
             >
             <q-btn flat round dense icon="close" v-close-popup />
@@ -31,133 +31,34 @@
               <div class="q-gutter-md q-col-gutter-md">
                 <div class="row q-col-gutter-md">
 
-                  <div class="q-col col-12 col-sm-6 col-md-6">
+                  <div class="q-col col-12 col-sm-12 col-md-12">
                     <q-input
                       class="custom-input"
                       outlined
                       dense
                       stack-label
-                      v-model="formInput.email"
-                      label="Email"
+                      v-model="formInput.dentist"
+                      label="Dentist Name"
                       lazy-rules
-                      :rules="[rules.requiredField, rules.properEmail]"
-                      v-if="addTransaction"
+                      :rules="[rules.requiredField]"
                       :readonly="viewing != false"
                     />
                   </div>
-                  <div class="q-col col-12 col-sm-6 col-md-6">
-             
-
-                    <q-input
-                    class="custom-input"
-                    outlined
-                    stack-label
-                      dense
-                      label="Password"
-                      v-model="formInput.password"
-                      :type="isPwd ? 'password' : 'text'"
-                      :rules="[rules.requiredField]"
-                      v-if="addTransaction"
-                      :readonly="viewing != false"
-                    >
-                    
-                      <template v-slot:append>
-                        <q-icon
-                          :name="isPwd ? 'visibility_off' : 'visibility'"
-                          class="cursor-pointer"
-                          @click="isPwd = !isPwd"
-                        ></q-icon>
-                      </template>
-                    </q-input>
-                  </div>
-
-
-                  <div class="q-col col-12 col-sm-12 col-md-4">
+                  <div class="q-col col-12 col-sm-12 col-md-12">
                     <q-input
                       class="custom-input"
                       outlined
                       dense
                       stack-label
-                      v-model="formInput.first_name"
-                      label="First Name"
+                      v-model="formInput.specialization"
+                      label="Specialization"
                       lazy-rules
                       :rules="[rules.requiredField]"
                       :readonly="viewing != false"
                     />
                   </div>
-  
-                  <div class="q-col col-12 col-sm-6 col-md-4">
-                    <q-input
-                      class="custom-input"
-                      outlined
-                      dense
-                      v-model="formInput.middle_name"
-                      label="Middle Name"
-                      :readonly="viewing != false"
-                    />
-                  </div>
-  
-                  <div class="q-col col-12 col-sm-6 col-md-4">
-                    <q-input
-                      class="custom-input"
-                      outlined
-                      dense
-                      v-model="formInput.last_name"
-                      label="Last Name"
-                      lazy-rules
-                      :rules="[rules.requiredField]"
-                      :readonly="viewing != false"
-                    />
-                  </div>
-                  <div class="q-col col-12 col-sm-6 col-md-6">
-                    <q-select
-                      class="custom-input-select col-5"
-                      outlined
-                      v-model="formInput.extension_name"
-                      :options="selectExtenstion"
-                      map-options
-                      option-value="extension_name"
-                      option-label="value"
-                      label="Extension Name"
-                      dense
-                      :readonly="viewing != false"
-                    />
-                  </div>
-                  <div class="q-col col-12 col-sm-6 col-md-6">
-                    <q-input
-                      class="custom-input"
-                      outlined
-                      dense
-                      stack-label
-                      v-model="formInput.home_address"
-                      label="Address"
-                      lazy-rules
-                      :rules="[rules.requiredField]"
-                      :readonly="viewing != false"
-                    />
-                  </div>
-                  
-                  
-                  <div class="q-col col-12 col-sm-6 col-md-6">
-                   
 
-                    <q-input
-                      class="custom-input"
-                      outlined
-                      dense
-                      type="date"
-                      option-value="date"
-                      stack-label
-                      v-model="formInput.birthday"
-                      label="Birthday"
-                      lazy-rules
-                      :rules="[rules.requiredField]"
-                      :readonly="viewing != false"
-                    />
-
-                  </div>
-                  
-                  <div class="q-col col-12 col-sm-6 col-md-6">
+                  <div class="q-col col-12 col-sm-12 col-md-12">
                     <q-input
                       class="custom-input"
                       outlined
@@ -171,24 +72,22 @@
                     />
                   </div>
 
-                  <!-- <div class="q-col col-12 col-sm-6 col-md-4">
+                  <div class="q-col col-12 col-sm-12 col-md-12">
                     <q-input
                       class="custom-input"
                       outlined
                       dense
                       stack-label
-                      v-model="formInput.religion"
-                      label="Religion"
+                      v-model="formInput.email"
+                      label="Email"
                       lazy-rules
-                      v-if="editMode || viewing"
+                      :rules="[rules.requiredField, rules.properEmail]"
+                      v-if="addTransaction"
                       :readonly="viewing != false"
                     />
-                  </div> -->
+                  </div>
 
-                  
-                
-                  
-                
+  
                 </div>
               </div>
   
@@ -216,7 +115,7 @@
 
   
       <q-table
-        title="User Record"
+        title="Services Lists"
         :rows="tablerows"
         :columns="columns"
         row-key="Id"
@@ -326,108 +225,36 @@
 </template>
 
 <script setup>
-import { ref, watch, computed } from "vue";
-import { exportFile, useQuasar } from "quasar";
+import { ref, computed } from "vue";
+import { useQuasar } from "quasar";
 import { auth } from "../../stores/auth";
 import api from "./API";
 
+const $q = useQuasar();
 const formProfile = ref(false);
 const addTransaction = ref(true);
-const store = auth();
-const $q = useQuasar();
-const formInput = ref({conditions: []});
-const submitting = ref(false);
-const separator = ref("vertical");
-const tablerows = ref([]);
 const loading = ref(false);
-const filter = ref("");
-const deleting = ref(false);
-const selected = ref([]);
+const formInput = ref({});
 const viewing = ref(false);
+const tablerows = ref([]);
+const submitting = ref(false);
 const editMode = ref(false); // Initially, we are not in edit mode
 const recordViewing = ref(false);
-
+const deleting = ref(false);
 
 const rules = ref({
   requiredField: (v) => !!v || "Required field.",
   requiredSelection: (v) =>
     (!!v && v.length > 0) || "Required at least one selection",
-  matchPassword: (v) =>
-    v === form.value.password || "Does not match new password.",
-  properEmail: (v) =>
-    !v ||
-    /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/.test(v) ||
-    "E-mail must be valid. Ex. juandelacruz@gmail.com",
   mobileNumber: (v) =>
     !v ||
     /^(09)\d{9}$/.test(v) ||
     "Mobile number must be valid. Ex. starts with (09) followed by xxxxxxxxx, where x = numeric character only",
 });
 
-const selectExtenstion = [
-   'Jr', 'Sr', 'III', 'IV'
-];
-
-const columns = [
-  {
-    align: "left",
-    label: "Name",
-    field: (row) =>
-      row.first_name + " " + (row.middle_name ?? "") + " " + row.last_name + " " + row.extension_name,
-    name: "Name",
-    sortable: true,
-  },
-
- 
-  {
-    align: "left",
-    label: "Birthday",
-    field: "Birthday",
-    field: (row) => row.birthday,
-    name: "Birthday",
-    sortable: true,
-  },
-  {
-    align: "left",
-    label: "Sex",
-    field: "Sex",
-    field: (row) => row.sex,
-    name: "Sex",
-    sortable: true,
-  },
-  {
-    align: "left",
-    label: "Religion",
-    field: "Religion",
-    field: (row) => row.religion,
-    name: "Religion",
-    sortable: true,
-  },
-  {
-    align: "left",
-    label: "Home Address",
-    field: "Home Address",
-    field: (row) => row.home_address,
-    name: "Home Address",
-    sortable: true,
-  },
-
-  
-  {
-    align: "left",
-    label: "Mobile Number",
-    field: "Mobile Number",
-    field: (row) => row.mobile_number,
-    name: "Mobile Number",
-    sortable: true,
-  },
-  
- 
-  { name: "actions", label: "Action", align: "center", style: "width:0px;" },
-];
 
 
-const AddUser = () => {
+const AddServices = () => {
   formProfile.value = true;
   addTransaction.value = true;
   recordViewing.value = false;
@@ -435,7 +262,6 @@ const AddUser = () => {
 };
 
 const EditRecord = (val) => {
-  formInput.value.conditions = [];
   formInput.value = val.row;
   formProfile.value = true;
   editMode.value = true;
@@ -457,6 +283,7 @@ const viewForm = (val) => {
   formInput.value = val.row;
   viewing.value = true;
   formProfile.value = true;
+
   
 };
 
@@ -466,66 +293,54 @@ const onReset = () => {
 };
 
 
-const DeleteRecord = (val) => {
-  $q.dialog({
-    title: "Delete Record",
-    message:
-      "Are you sure you want to delete, user: " +
-      val.row.first_name +
-
-      "?",
-    cancel: true,
-  }).onOk(() => {
-    deleting.value = true;
-    api
-      .deleteAdmin(val.row)
-      .then((response) => {
-        console.log(response);
-        if (response.data?.error || response.data?.message) {
-          $q.notify({
-            color: "negative",
-            position: "top",
-            message:
-              JSON.stringify(response.data?.error) ??
-              JSON.stringify(response.data?.message) ??
-              "Failed to Delete User",
-            icon: "report_problem",
-          });
-          deleting.value = false;
-        } else {
-          // Error response
-          $q.notify({
-            color: "green-4",
-            textColor: "white",
-            icon: "cloud_done",
-            message: "Record has been deleted!",
-          });
-          deleting.value = false;
-          formProfile.value = false;
-          loadData();
-        }
-      })
-      .catch((error) => {
-        $q.notify({
-          color: "negative",
-          position: "top",
-          message: error.message ?? "Failed to Delete User",
-          icon: "report_problem",
-        });
-        deleting.value = false;
-      });
-  });
-};
+const columns = [
+  {
+    align: "left",
+    label: "Dentist Name",
+    field: "Dentist Name",
+    field: (row) => row.dentist,
+    name: "Dentist Name",
+    sortable: true,
+  },
+  {
+    align: "left",
+    label: "Specialization",
+    field: "Specialization",
+    field: (row) => row.specialization,
+    name: "Specialization",
+    sortable: true,
+  },
+  {
+    align: "left",
+    label: "Mobile Number",
+    field: "Mobile Number",
+    field: (row) => row.mobile_number,
+    name: "Mobile Number",
+    sortable: true,
+  },
+  {
+    align: "left",
+    label: "Email",
+    field: "Email",
+    field: (row) => row.email,
+    name: "Email",
+    sortable: true,
+  },
+  
+ 
+  { name: "actions", label: "Action", align: "center", style: "width:0px;" },
+];
 
 
 const onSubmit = (val) => {
   // add
 
+
   if (addTransaction.value) {
     console.log(formInput);
     submitting.value = true;
     api
-    .addAdmin(formInput.value)
+    .addDoctor(formInput.value)
       .then((response) => {
         console.log(response);
         if (response.data?.error || response.data?.message) {
@@ -535,7 +350,7 @@ const onSubmit = (val) => {
             message:
               JSON.stringify(response.data?.error) ??
               JSON.stringify(response.data?.message) ??
-              "Failed to Add Admin",
+              "Failed to Add Services",
             icon: "report_problem",
           });
           submitting.value = false;
@@ -544,7 +359,7 @@ const onSubmit = (val) => {
             color: "green-4",
             textColor: "white",
             icon: "cloud_done",
-            message: "New Admin has been saved!",
+            message: "Services successfully added",
           });
           onReset();
           loadData();
@@ -556,20 +371,20 @@ const onSubmit = (val) => {
         $q.notify({
           color: "negative",
           position: "top",
-          message: error.message ?? "Failed to add Admin",
+          message: error.message ?? "Failed to add Services",
           icon: "report_problem",
         });
         submitting.value = false;
       });
   }  else {
     $q.dialog({
-      title: "Edit Admin Record",
+      title: "Edit Doctor",
       message: "Are you sure you want to update?",
       cancel: true,
     }).onOk(() => {
       submitting.value = true;
       api
-        .updateAdmin(formInput.value)
+        .updateDoctor(formInput.value)
         .then((response) => {
           console.log(response);
           if (response.data?.error || response.data?.message) {
@@ -579,7 +394,7 @@ const onSubmit = (val) => {
               message:
                 JSON.stringify(response.data?.error) ??
                 JSON.stringify(response.data?.message) ??
-                "Failed to Update Admin",
+                "Failed to Update Doctor",
               icon: "report_problem",
             });
             submitting.value = false;
@@ -589,18 +404,19 @@ const onSubmit = (val) => {
               color: "green-4",
               textColor: "white",
               icon: "cloud_done",
-              message: "Admin has been updated!",
+              message: "Doctor has been successfully updated!",
             });
             submitting.value = false;
             formProfile.value = false;
             onReset();
+            loadData();
           }
         })
         .catch((error) => {
           $q.notify({
             color: "negative",
             position: "top",
-            message: error.message ?? "Failed to Update Admin",
+            message: error.message ?? "Failed to Update Doctor",
             icon: "report_problem",
           });
           submitting.value = false;
@@ -609,11 +425,58 @@ const onSubmit = (val) => {
   }
 };
 
+const DeleteRecord = (val) => {
+  $q.dialog({
+    title: "Delete Doctor",
+    message:
+      "Are you sure you want to delete, doctor: " + val.row.dentist + "?",
+    cancel: true,
+  }).onOk(() => {
+    deleting.value = true;
+    api
+      .deleteDoctor(val.row)
+      .then((response) => {
+        console.log(response);
+        if (response.data?.error || response.data?.message) {
+          $q.notify({
+            color: "negative",
+            position: "top",
+            message:
+              JSON.stringify(response.data?.error) ??
+              JSON.stringify(response.data?.message) ??
+              "Failed to Delete Doctor",
+            icon: "report_problem",
+          });
+          deleting.value = false;
+        } else {
+          // Error response
+          $q.notify({
+            color: "green-4",
+            textColor: "white",
+            icon: "cloud_done",
+            message: "Doctor has been succefully deleted!",
+          });
+          deleting.value = false;
+          formProfile.value = false;
+          loadData();
+        }
+      })
+      .catch((error) => {
+        $q.notify({
+          color: "negative",
+          position: "top",
+          message: error.message ?? "Failed to Delete Doctor",
+          icon: "report_problem",
+        });
+        deleting.value = false;
+      });
+  });
+};
 
 const loadData = () => {
   loading.value = true;
   api
-    .viewAllAdmin()
+    .viewAllDoctors()
     .then((response) => {
       if (response == "401") {
         $q.notify({
@@ -626,7 +489,7 @@ const loadData = () => {
         return;
       }
       console.log(response);
-      tablerows.value = response.data;
+      tablerows.value = response.dentist;
       loading.value = false;
     })
     .catch(() => {

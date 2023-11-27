@@ -24,7 +24,7 @@
                                     </div>
                                     <a class="mt-4" href="#/Login">Login here</a>
                                 </div>
-                                <q-form @submit="onSubmit" @reset="onReset" class="q-gutter-sd">
+                                <q-form @submit="onSubmit" @reset="onReset" class="q-gutter-sd" enctype="multipart/form-data">
                                     <div class="q-gutter-md q-col-gutter-md">
                                         <div class="row q-col-gutter-md">
                                         <div class="q-col col-12 col-sm-12 col-md-6">
@@ -129,7 +129,7 @@
                                             outlined
                                             dense
                                             stack-label
-                                            v-model="formInput.home_phone_number"
+                                            v-model="formInput.mobile_number"
                                             label="Phone Number"
                                             lazy-rules
                                             :rules="[rules.requiredField, rules.mobileNumber]"
@@ -153,23 +153,41 @@
 
                                         </div>
                                         <div class="q-col col-12 col-sm-6 col-md-4">
-                                            <q-input
-                                            class="custom-input"
+                                          <q-select
+                                            class="custom-input-select col-5"
                                             outlined
-                                            dense
-                                            stack-label
                                             v-model="formInput.sex"
+                                            :options="selectSex"
+                                            map-options
+                                            option-value="sex"
+                                            option-label="value"
                                             label="Sex"
-                                            lazy-rules
-                                            :rules="[rules.requiredField]"
-                                            />
+                                            dense
+                                          />
                                         </div>
                                         
-                                        <!-- {{ formInput }} -->
-                                        
+                                        <!-- <q-uploader
+                                          label="Upload"
+                                          v-model="formInput.image"
+                                          @added="onFileChange"
+                                        /> -->
+                                        <q-label><b>Upload Profile Picture</b></q-label>
+                                        <div class="q-col col-12 col-sm-12 col-md-12">
+                                          <input 
+                                            class="custom-input"
+                                            type="file" 
+                                            outlined
+                                            dense
+                                            accept="image/*" 
+                                            :rules="[rules.requiredField]"
+                                            @change="onFileChange" />
+                                        </div>
+
                                         
                                         </div>
                                     </div>
+                                    <!-- {{ formInput }} -->
+
                         
                                     <div class="row justify-end">
                                         <div>
@@ -197,14 +215,12 @@
 </template>
 
 <script setup>
-import { ref, watch, computed } from "vue";
-import { exportFile, useQuasar } from "quasar";
-import { auth } from "../../stores/auth";
+import { ref} from "vue";
+import { useQuasar } from "quasar";
 import api from "./API";
-const formProfile = ref(false);
 const addTransaction = ref(true);
 const $q = useQuasar();
-const formInput = ref({});
+const formInput = ref({image: null});
 const submitting = ref(false);
 const rules = ref({
   requiredField: (v) => !!v || "Required field.",
@@ -227,6 +243,24 @@ const selectExtenstion = [
 ];
 
 
+const selectSex = [
+  'Male', 'Female'
+]
+
+// const onFileChange = (event) => {
+//   // const file = event[0];
+//   formInput.value.image = event;
+//   console.log(event);
+// };
+
+const onFileChange = (event) => {
+  const file = event.target.files[0];
+  formInput.value.image = file;
+  console.log(file);
+};
+
+
+
 const onReset = () => {
 //   formInput.value = {}
   // loadData();
@@ -238,8 +272,25 @@ const onSubmit = (val) => {
   if (addTransaction.value) {
     console.log(formInput);
     submitting.value = true;
-    api
-    .addPatient(formInput.value)
+    const formData = new FormData();
+    formData.append('email', formInput.value.email);
+    formData.append('password', formInput.value.password);
+    formData.append('first_name', formInput.value.first_name);
+    formData.append('last_name', formInput.value.last_name);
+    // formData.append('middle_name', formInput.value.middle_name || '');
+    // formData.append('extension_name', formInput.value.extension_name || '');
+    formData.append('birthday', formInput.value.birthday || '');
+    formData.append('sex', formInput.value.sex);
+    formData.append('home_address', formInput.value.home_address);
+    formData.append('mobile_number', formInput.value.mobile_number || '');
+    
+    // Append the image file
+    if (formInput.value.image) {
+      formData.append('image', formInput.value.image);
+    }
+
+        api
+    .addPatient(formData)
       .then((response) => {
         console.log(response);
         if (response.data?.error || response.data?.message) {
@@ -274,6 +325,12 @@ const onSubmit = (val) => {
         });
         submitting.value = false;
       });
+      
+      // };
+
+      // reader.readAsBinaryString(formInput.value.image);
+
+    
   } 
 };
 
@@ -285,7 +342,7 @@ const onSubmit = (val) => {
         /* margin: 0 20px; */
     }
     .form-card {
-        width: 50vw;
+        width: 80vw;
         margin: 0 auto;
     }
 

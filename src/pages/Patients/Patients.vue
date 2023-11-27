@@ -465,7 +465,6 @@
                       <q-radio v-model="formInput.pregnant" :val=false label="No" :disable="viewing !== false"/>
 
                   </div>
-                  {{ formInput }}
                   <div class="q-col col-12 col-sm-12 col-md-12" v-if="formInput.sex == 'Female'">
                    <q-input
                      class="custom-input"
@@ -846,9 +845,9 @@ const onReset = () => {
 
 const DeleteRecord = (val) => {
   $q.dialog({
-    title: "Delete Record",
+    title: "Archive Patient",
     message:
-      "Are you sure you want to delete, profile: " +
+      "Are you sure you want to archive, profile: " +
       val.row.first_name +
 
       "?",
