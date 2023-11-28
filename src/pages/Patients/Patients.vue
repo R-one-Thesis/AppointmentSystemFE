@@ -564,6 +564,17 @@
                     @click="DeleteRecord(props)"
                   />
 
+                  <q-btn
+                    class="q-mr-xs"
+                    round
+                    dense
+                    color="positive"
+                    size="sm"
+                    @click="AddImg(props)"
+                  >
+                  <i class="fas fa-image"></i>
+                  </q-btn>
+
               </q-td>
             </template>
 
