@@ -81,7 +81,7 @@
                     :rules="[rules.requiredField]"
                   />
                 </div>
-                <q-label><b>Select Service:</b></q-label>
+                <!-- <q-label><b>Select Service:</b></q-label>
                 <div
                   class="q-col col-12 col-sm-12 col-md-12"
                  
@@ -97,7 +97,7 @@
               />
 
 
-                </div>
+                </div> -->
               
                 
                 <div class="q-col col-12 col-sm-6 col-md-6">
@@ -186,37 +186,50 @@
             <div v-if="scheduleDialogData">
               <div><strong>Doctor:</strong> {{ scheduleDialogData.doctor }}</div>
               <div><strong>Specialization:</strong> {{ scheduleDialogData.details }}</div>
-              <div><strong>Services: </strong>
-                <span v-for="(service, index) in scheduleDialogData.services" :key="index">
-                   {{ getServiceDisplayName(service) }}
-           
-                  <span v-if="index < scheduleDialogData.services.length - 1">, </span>
-                </span>
+              <div v-if="hasPermission('PATIENT')">
+                <div v-if="scheduleDialogData.booked == false">
+                    <div><strong>Select Services: </strong> </div>
+                    <!-- <q-checkbox
+                    outlined
+                    :options="servicesData"
+                    v-model="formInput.service_type"
+                    option-value="value"
+                    option-label="label"
+                    dense
+                      /> -->
+
+                    <q-select
+                      :readonly="scheduleDialogData.booked == true"
+                      class="custom-input-select col-5"
+                      outlined
+                      v-model="formInput.services"
+                      :options="servicesData"
+                      option-value="id"
+                      option-label="service_type"
+                      map-options
+                      emit-value
+                      dense
+                      multiple
+                      clearable
+                      :rules="[rules.requiredField]"
+                    />
+                </div>
+                <div v-else>
+                  <strong>Services:</strong>
+                  <ul>
+                    <li v-for="selectedService in formInput.services" :key="selectedService">
+                      {{ selectedService }}
+                    </li>
+                  </ul>
+                  <div><strong>Total Price:</strong> ₱{{ scheduleDialogData.price }}</div>
+                  <div><strong>Duration:</strong> {{ scheduleDialogData.duration }} minutes</div>
+                </div>
               </div>
-              <!-- <div v-if="hasPermission('PATIENT')" >
-              <q-label><b>Select a services:</b></q-label>
-              <div
-                class="q-col col-12 col-sm-12 col-md-12"
-                v-if="scheduleDialogData.booked == false"
-                  >
-                  <q-option-group
-                  :options="services"
-                  option-value="value"
-                  option-label="label"
-                  type="checkbox"
-                  v-model="formInput.services"
-                  :rules="[rules.requiredSelection]"
-                  dense
-                  map-options
-                  emit-value
-                  
-                />
-              </div>
-              </div> -->
-              <!-- {{ formInput }} -->
+             
+            
               <div><strong>Date:</strong> {{ scheduleDialogData.date }}</div>
               <div><strong>Time:</strong> {{ scheduleDialogData.time }}</div>
-              <div><strong>Duration:</strong> {{ scheduleDialogData.duration }} minutes</div>
+              <!-- <div><strong>Duration:</strong> {{ scheduleDialogData.duration }} minutes</div> -->
               <div><strong>Status:</strong> {{ scheduleDialogData.booked === 0 ? 'Available' : 'Already booked' }}</div>
                 <div class="row justify-start" v-if="scheduleDialogData.booked == false">
                   <q-btn
@@ -264,57 +277,6 @@ const convertTo12HourFormat = (time24) => {
   return `${formattedHour}:${minute} ${ampm}`;
 };
 
-// Function to fetch schedules
-const fetchSchedules = () => {
-  api.viewAllSched()
-    .then((response) => {
-      schedules.value = response.schedules;
-      eventsMap.value = [];
-      // Populate eventsMap using response data
-      response.schedules.forEach((schedule) => {
-        console.log(schedule.date);
-        if (!eventsMap.value[schedule.date]) {
-          eventsMap.value[schedule.date] = [];
-        }
-        eventsMap.value[schedule.date].push({
-          id: schedule.id,
-          doctor: schedule.dentist_name,
-          details: schedule.specialization,
-          services: schedule.services,
-          date: schedule.date,
-          time: convertTo12HourFormat(schedule.time_start),
-          duration: parseFloat(schedule.duration),
-          bgcolor: schedule.booked === 1 ? 'red' : 'green',
-          icon: 'fas fa-handshake',
-          booked: schedule.booked, // Add booked property
-        });
-        // console.log(eventsMap[schedule.date]);
-      });
-      console.log('Schedules successfully fetched:', schedules.value);
-    })
-    .catch((error) => {
-      console.error(error);
-    });
-};
-
-
-const getServiceDisplayName = (service) => {
-  const serviceNames = {
-    dental_restoration: 'Dental Restoration',
-    tooth_extract: 'Tooth Extraction',
-    dentures: 'Dentures',
-    odontectomy: 'Odontectomy',
-    root_canal: 'Root Canal',
-    braces: 'Braces',
-    jacket_crown: 'Jacket Crown',
-    oral_prophylaxis: 'Oral Prophylaxis',
-    consultation: 'Consultation',
-  };
-  return serviceNames[service] || service;
-};
-
-
-
 // Your formInput and related variables
 const formSchedule = ref(false);
 const viewSchedule = ref(false);
@@ -322,9 +284,8 @@ const submitting = ref(false);
 const dateValue = ref('');
 const addTransaction = ref(true);
 const time_start = ref('');
-const formInput = ref({
-  services: []
-});
+const formInput = ref({services: []});
+
 const ph = ref('');
 const loading = ref(false);
 const doctors_id = ref(null);
@@ -332,29 +293,91 @@ const duration = ref(null);
 const scheduleDialogData = ref(null);
 const selectedDate = ref(today());
 
+const services = ref([]);
 
-const selectedDuration = [
-  { duration: 30, value: '30 mins' },
-  { duration: 60, value: '1 hour' },
-  { duration: 90, value: '1 hour and 30 mins' },
-];
 
-const selectedDurationValue = computed(() => {
-  const selectedOption = selectedDuration.find((option) => option.duration === formInput.value.duration);
-  return selectedOption ? selectedOption.duration : null;
-});
+const servicesData = ref([]);
 
-const services = ref([
-  { label: 'Dental Restoration', value: 'dental_restoration', color: 'green' },
-  { label: 'Tooth Extraction', value: 'tooth_extract', color: 'green' },
-  { label: 'Odontectomy', value: 'odontectomy', color: 'green' },
-  { label: 'Dentures', value: 'dentures', color: 'green' },
-  { label: 'Root Canal', value: 'root_canal', color: 'green' },
-  { label: 'Braces', value: 'braces', color: 'green' }, // Fixed the typo here (Bracess to Braces)
-  { label: 'Jacket Crown', value: 'jacket_crown', color: 'green' },
-  { label: 'Oral Prophylaxis', value: 'oral_prophylaxis', color: 'green' },
-  { label: 'Consultation', value: 'consultation', color: 'green' }
-]);
+
+
+const loadData = async () => {
+  loading.value = true;
+
+  try {
+    // Fetch services
+    const servicesResponse = await api.viewAllServices();
+    if (servicesResponse === "401") {
+      $q.notify({
+        color: "negative",
+        position: "top",
+        message: "Unauthenticated",
+        icon: "report_problem",
+      });
+    } else {
+      console.log("Services response:", servicesResponse);
+      services.value = servicesResponse;
+      
+      servicesData.value = servicesResponse.map((services) => ({
+        id: services.id, // Assuming "id" is the actual field name in the response
+        service_type: services.service_type+" - ₱"+services.price, // Assuming "name" is the actual field name in the response
+        duration: services.duration,
+        price: services.price,
+        
+      }));
+
+      console.log("Services nii:", servicesData);
+
+  
+
+      // Fetch schedules
+      const schedulesResponse = await api.viewAllSched();
+      schedules.value = schedulesResponse.schedules;
+      eventsMap.value = [];
+
+      // Populate eventsMap using response data
+      schedulesResponse.schedules.forEach((schedule) => {
+        console.log("Hello", schedule.services);
+        if (!eventsMap.value[schedule.date]) {
+          eventsMap.value[schedule.date] = [];
+        }
+        eventsMap.value[schedule.date].push({
+          id: schedule.id,
+          doctor: schedule.dentist_name,
+          details: schedule.specialization,
+          date: schedule.date,
+          time: convertTo12HourFormat(schedule.time_start),
+          services: schedule.services,
+          price: schedule.price,
+          duration: parseFloat(schedule.duration),
+          bgcolor: schedule.booked === 1 ? "red" : "green",
+          icon: "fas fa-handshake",
+          booked: schedule.booked, // Add booked property
+        });
+      });
+
+      console.log("Services successfully fetched:", services.value);
+      console.log("Schedules successfully fetched:", schedules.value);
+    }
+  } catch (error) {
+    console.error(error);
+    $q.notify({
+      color: "negative",
+      position: "top",
+      message: "Loading data failed",
+      icon: "report_problem",
+    });
+  } finally {
+    loading.value = false;
+  }
+};
+
+
+
+// const formBooking = ref({
+//   service_type: Object.fromEntries(
+//     services.value.map(service => [service.id, false])
+//   )
+// });
 
 const rules = {
   requiredField: (v) => !!v || "Required field.",
@@ -365,6 +388,7 @@ const rules = {
 const openScheduleDialog = (schedule) => {
   scheduleDialogData.value = schedule;
   viewSchedule.value = true;
+  formInput.value.services = schedule.services;
 };
 
 const closeScheduleDialog = () => {
@@ -480,6 +504,7 @@ const addSchedule = () => {
 
 const onHide = () => {
   // Implement the onHide method
+  formInput.service_type = [];
 }
 
 const onReset = () => {
@@ -496,7 +521,7 @@ const getDoctors = () => {
         dentist: doctor.dentist, // Assuming "name" is the actual field name in the response
         
       }));
-      console.log(doctorsOptions);
+      console.log("Doctors nii:", doctorsOptions);
 
       
 
@@ -522,27 +547,6 @@ const hasPermission = (authority) => {
   return false;
 };
 
-// const getSchedule = () => {
-//   api
-//     .viewAllSched()
-//     .then((response) => {
-//       console.log(response);
-//       viewSched.value = response.schedules;
-
-//       loading.value = false;
-//     })
-//     .catch((error) => {
-//       // console.log(error);
-//       loading.value = false;
-//       $q.notify({
-//         color: "negative",
-//         position: "top",
-//         message: "Failed to load Schedules",
-//         icon: "report_problem",
-//       });
-//       loading.value = false;
-//     });
-// };
 
 const onSubmit = (val) => {
   // add
@@ -578,7 +582,8 @@ const onSubmit = (val) => {
             icon: "cloud_done",
             message: "New Schedule has been saved!",
           });
-          fetchSchedules();
+          // fetchSchedules();
+          loadData();
           onReset();
           submitting.value = false;
           formSchedule.value = false;
@@ -605,7 +610,7 @@ const bookNow = (val) => {
       // submitting.value = true;
      
       api
-        .updateSchedule(scheduleDialogData.value.id, { services: formInput.services })
+        .updateSchedule(scheduleDialogData.value.id, formInput.value)
         .then((response) => {
           console.log(response);
           if (response.data?.error || response.data?.message) {
@@ -627,6 +632,8 @@ const bookNow = (val) => {
               icon: "cloud_done",
               message: "Booked successfully!",
             });
+
+            loadData();
             // submitting.value = false;
             // formProfile.value = false;
             // onReset();
@@ -644,8 +651,15 @@ const bookNow = (val) => {
     });
 }
 
+
+// api.sendSMS();
+
+loadData();
+
+
+
 getDoctors();
-fetchSchedules();
+// fetchSchedules();
 // getSchedule();
 </script>
   

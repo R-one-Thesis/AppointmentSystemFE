@@ -13,6 +13,7 @@
         <div class="medical-record">
           <h5>Medical Record</h5>
           <div class="medical-details">
+            
             <p><b>Physician:</b> {{ patientDetails.physician }}</p>
             <p><b>Physician Address:</b> {{ patientDetails.physicianAddress }}</p>
             <p><b>Reason:</b> {{ patientDetails.reason }}</p>
@@ -25,6 +26,12 @@
             <p><b>Mens Problems:</b> {{ patientDetails.mensProblems }}</p>
           </div>
         </div>
+        <div class="medical-record">
+        <h5>Images and Documents</h5>
+        <div v-for="image in patientDetails.image_records" :key="image.image_path">
+              <img :src="getImageUrl(image.image_path)" :alt="image.image_type" class="images">
+        </div>
+      </div>
         <!-- <div class="booking-record">
           <h5>Booking History</h5>
           <div class="booking-details">
@@ -52,6 +59,11 @@
   
   const loading = ref(false);
   const patientDetails = ref(null);
+
+  const getImageUrl = (imageName) => {
+      return `http://127.0.0.1:8000/${imageName}`;
+  };
+
   
   const loadData = async () => {
     loading.value = true;
@@ -89,6 +101,7 @@
           physicianAddress: user.physician_address,
           reason: user.reason,
           hospitalization: user.hospitalization,
+          image_records: user.image_records,
           conditions: user.conditions,
           medication: user.medication,
           allergies: user.allergies,
@@ -136,6 +149,9 @@
     
 }
 
+img.images {
+    width: 200px;
+}
 .medical-details {
     display: grid;
     grid-template-columns: 1fr 1fr 1fr;

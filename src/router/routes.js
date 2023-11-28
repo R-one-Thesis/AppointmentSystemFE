@@ -75,7 +75,7 @@ const routes = [
             path: '/Profile', 
             component: () => import('pages/Profile/Profile.vue'),
             name: 'My Profile',
-            meta: { icon: 'fas fa-users', roles: ['PATIENT'] }
+            meta: { icon: 'fas fa-user-circle', roles: ['PATIENT'] }
           },
           // Add more routes for the Management group here
         ]
