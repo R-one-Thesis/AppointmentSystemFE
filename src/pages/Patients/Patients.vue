@@ -642,19 +642,21 @@
       </q-table>
 
       <q-dialog v-model="viewImages" persistent transition-show="flip-down" @hide="onHide">
-        <q-card style="width: 1000px; max-width: 80vw">
+        <q-card style="width: 1000px; max-width: 80vw; overflow-x: hidden;">
           <q-toolbar>
             <q-toolbar-title><span class="text-weight-bold">Patient Documents</span></q-toolbar-title>
             <q-btn flat round dense icon="close" v-close-popup />
           </q-toolbar>
           <q-card-section>
+            <q-form @submit="addImg" @reset="onReset" class="q-gutter-sd" enctype="multipart/form-data">
             <!-- Display schedule details in the dialog -->
-            <div v-if="selectedPatient">
-              <!-- Hello {{ selectedPatient.user_id }} -->
+            <div v-if="selectedPatient"  style="display: flex; gap: 20px; flex-wrap: wrap; justify-content: center;">
               <div v-for="image in selectedPatient.image_records" :key="image.image_path">
                   <img :src="getImageUrl(image.image_path)" :alt="image.image_type" class="images">
               </div>
-              <q-label><b>Upload Document</b></q-label>
+             
+            </div>
+            <q-label><b>Upload Document</b></q-label>
                 <div class="q-col col-12 col-sm-12 col-md-12">
                   <input 
                     class="custom-input"
@@ -665,8 +667,14 @@
                     :rules="[rules.requiredField]"
                     @change="onFileChange" />
                 </div>
-            
-            </div>
+
+              <q-btn
+                  :loading="submitting"
+                  label="Save"
+                  type="submit"
+                  class="drawerActive"
+                />
+          </q-form>
           </q-card-section>
         </q-card>
       </q-dialog>
@@ -698,6 +706,7 @@ const editMode = ref(false); // Initially, we are not in edit mode
 const recordViewing = ref(false);
 const viewImages = ref(false);
 const selectedPatient = ref(null);
+const image = ref({image: []});
 
 
 const viewDocument = (patient) => {
@@ -708,6 +717,58 @@ const viewDocument = (patient) => {
 const getImageUrl = (imageName) => {
       return `http://127.0.0.1:8000/${imageName}`;
   };
+
+const onFileChange = (event) => {
+  const file = event.target.files[0];
+  image.value.image = file;
+  console.log(file);
+};
+
+
+const addImg = (val) => {
+  // add
+    console.log(image.value.image);
+    const formData = new FormData();
+    formData.append('image', image.value.image);
+    submitting.value = true;
+    api
+    .addDocument(formData, selectedPatient.value.id)
+      .then((response) => {
+        console.log(response);
+        if (response.data?.error || response.data?.message) {
+          $q.notify({
+            color: "negative",
+            position: "top",
+            message:
+              JSON.stringify(response.data?.error) ??
+              JSON.stringify(response.data?.message) ??
+              "Failed to Add Schedule",
+            icon: "report_problem",
+          });
+          submitting.value = false;
+        } else {
+          $q.notify({
+            color: "green-4",
+            textColor: "white",
+            icon: "cloud_done",
+            message: "New Schedule has been saved!",
+          });
+          submitting.value = false;
+          viewImages.value = false;
+          loadData();
+        }
+      })
+      .catch((error) => {
+        $q.notify({
+          color: "negative",
+          position: "top",
+          message: error.message ?? "Failed to add Schedule",
+          icon: "report_problem",
+        });
+        submitting.value = false;
+      });
+};
+
 
 
 
@@ -1099,5 +1160,6 @@ loadData();
 
 img.images {
     width: 150px;
+    object-fit: cover;
 }
 </style>
