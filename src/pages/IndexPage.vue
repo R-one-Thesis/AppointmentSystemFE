@@ -52,6 +52,12 @@
           class="q-mt-md q-mb-md drawerActive text-white"
           v-if="hasPermission('ADMIN')"
         />
+        <q-btn
+          label="Scan QR"
+          @click="qrMode=true"
+          class="q-mt-md q-mb-md drawerActive text-white"
+          v-if="hasPermission('ADMIN')"
+        />
         <q-dialog v-model="formSchedule" persistent transition-show="scale" @hide="onHide">
       <q-card style="width: 650px; max-width: 80vw">
         <q-toolbar>
@@ -184,6 +190,7 @@
           <q-card-section>
             <!-- Display schedule details in the dialog -->
             <div v-if="scheduleDialogData">
+              <div v-if="scheduleDialogData.name"><strong>Booked By:</strong> {{ scheduleDialogData.name }}</div>
               <div><strong>Doctor:</strong> {{ scheduleDialogData.doctor }}</div>
               <div><strong>Specialization:</strong> {{ scheduleDialogData.details }}</div>
               <div v-if="hasPermission('PATIENT')">
@@ -226,7 +233,6 @@
                 </div>
               </div>
              
-            
               <div><strong>Date:</strong> {{ scheduleDialogData.date }}</div>
               <div><strong>Time:</strong> {{ scheduleDialogData.time }}</div>
               <!-- <div><strong>Duration:</strong> {{ scheduleDialogData.duration }} minutes</div> -->
@@ -241,10 +247,98 @@
 
                   />
                 </div>
+                <QRCodeVue3
+                    v-if="scheduleDialogData.booked == true && hasPermission('PATIENT')" 
+                    :width="250"
+                    :height="250"
+                    :value="scheduleDialogData.id+'+'+scheduleDialogData.date"
+
+                    :qrOptions="{
+                      typeNumber: 0,
+                      mode: 'Byte',
+                      errorCorrectionLevel: 'H',
+                    }"
+                    :imageOptions="{
+                      hideBackgroundDots: true,
+                      imageSize: 0.4,
+                      margin: 0,
+                    }"
+                    :dotsOptions="{
+                      type: 'square',
+                      color: 'black',
+                      gradient: {
+                        type: 'linear',
+                        rotation: 0,
+                        colorStops: [
+                          { offset: 0, color: 'black' },
+                          { offset: 1, color: 'black' },
+                        ],
+                      },
+                    }"
+                    :corners-square-options="{
+                      type: 'square',
+                      color: 'black',
+
+                    }"
+                    :corners-dot-options="{
+                      type: 'square',
+                      color: 'black',
+
+                    }"
+                    :backgroundOptions="{ color: '#ffffff' }"
+
+                    fileExt="png"
+                    :download="false"
+                    myclass="my-qur"
+                    imgclass="img-qr"
+                    downloadButton="my-button"
+                    :downloadOptions="{ name: 'vqr', extension: 'png' }"
+                  />
             </div>
           </q-card-section>
         </q-card>
       </q-dialog>
+
+      <q-dialog
+      v-model="qrMode"
+      persistent
+      transition-show="fade"
+      transition-hide="fade"
+      class="qr-dialog"
+    >
+      <q-card style="width: 360px; height: 270px">
+        <div class="qr-background">
+          <div class="qr-square"></div>
+        </div>
+        <q-toolbar style="position: absolute; background: none; z-index: 1">
+          <!-- <q-avatar>
+              <img src="https://cdn.quasar.dev/logo-v2/svg/logo.svg">
+            </q-avatar> -->
+
+          <q-btn flat round dense icon="close" v-close-popup style="color: #fff"/>
+          <span
+            style="
+              text-align: center;
+              font-weight: bold;
+              width: 100%;
+              margin-left: -35px;
+              font-size: 20px;
+            "
+            >{{ qrModeTitle }}</span
+          >
+        </q-toolbar>
+        <div class="stream">
+          <qr-stream
+            @camera-on="onReady"
+            key="qr-component"
+            @decode="onDecode"
+            class="mb"
+          >
+            <div style="color: red" class="frame"></div>
+          </qr-stream>
+        </div>
+      </q-card>
+    </q-dialog>
     </div>
     
   </template>
@@ -257,6 +351,8 @@ import {
   today
 } from '@quasar/quasar-ui-qcalendar/src/index.js';
 import api from "../pages/commonAPI/";
+import QRCodeVue3 from "qrcode-vue3";
+import { QrcodeStream, QrStream, QrCapture, QrDropzone } from "vue3-qr-reader";
 import { ref, computed, onMounted, reactive } from 'vue';
 import { exportFile, useQuasar, copyToClipboard } from "quasar";
 import NavigationBar from '../components/NavigationBar.vue';
@@ -267,6 +363,62 @@ const store = auth();
 const formProfile = ref(false);
 const schedules = ref([]);
 const eventsMap = ref([]);
+const qrMode = ref(false);
+
+const onDecode = (data) => {
+  // console.log("wew");
+  if (data) {
+    console.log(data);
+
+    // scanAccount(decodedQR.value);
+    // qrMode.value = false;
+    // qrAccountActive.value = true;
+    let id = data.split('+')[0];
+    
+  api
+    .getSchedule(id)
+    .then((response) => {
+      if (response == "401") {
+        $q.notify({
+          color: "negative",
+          position: "top",
+          message: "Unauthenticated",
+          icon: "report_problem",
+        });
+        return;
+      }
+        // Map user_id and id properties
+        scheduleDialogData.value.doctor = response.schedule.dentist_name,
+        scheduleDialogData.value.details = response.schedule.specialization,
+        scheduleDialogData.value.date = response.schedule.date,
+        scheduleDialogData.value.time = convertTo12HourFormat(response.schedule.time_start),
+        scheduleDialogData.value.services = response.schedule.services,
+        scheduleDialogData.value.price = response.schedule.price,
+        scheduleDialogData.value.duration = parseFloat(response.schedule.duration),
+        scheduleDialogData.value.bgcolor = response.schedule.booked === 1 ? "red" : "green",
+        scheduleDialogData.value.icon = "fas fa-handshake",
+        scheduleDialogData.value.booked = response.schedule.booked, // Add booked property
+        scheduleDialogData.value.name = response.schedule.bookings[0].patient_name, // Add booked property
+        
+
+      console.log(response);
+      viewSchedule.value = true;
+    })
+    .catch((e) => {
+      $q.notify({
+        color: "negative",
+        position: "top",
+        message: "Loading failed",
+        icon: "report_problem",
+      });
+      console.log(e);
+    });
+
+  }
+};
+
+
+
 
 
 const convertTo12HourFormat = (time24) => {
