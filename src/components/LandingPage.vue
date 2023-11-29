@@ -66,7 +66,7 @@
             <div v-if="scheduleDialogData">
               <div><strong>Doctor:</strong> {{ scheduleDialogData.doctor }}</div>
               <div><strong>Specialization:</strong> {{ scheduleDialogData.details }}</div>
-              <div><strong>Services: </strong>
+              <div v-if="scheduleDialogData.booked == true"><strong>Services: </strong>
                 <span v-for="(service, index) in scheduleDialogData.services" :key="index">
                    {{ getServiceDisplayName(service) }}
                   <!-- Add a comma and space after each service except the last one -->

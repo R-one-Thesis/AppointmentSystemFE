@@ -27,6 +27,16 @@ export const auth = defineStore('user', {
     async login(userDetails){
         
         try {
+
+
+          const csrfToken = getCSRFToken(); // Implement this function to retrieve the CSRF token
+
+            // Set the CSRF token in the request headers
+            axios.defaults.headers.common['X-CSRF-TOKEN'] = csrfToken;
+
+            // Your login request
+            const response = await axios.post("api/login", userDetails);
+            console.log(response.data);
             const data = await api.post("api/login", userDetails)
             console.log(data.data)
             if(data.data.user_type == 'patient') {
