@@ -28,10 +28,12 @@
         </div>
         <div class="medical-record">
         <h5>Images and Documents</h5>
-        <div v-for="image in patientDetails.image_records" :key="image.image_path">
-              <img :src="getImageUrl(image.image_path)" :alt="image.image_type" class="images">
+        <div  style="display: flex; gap: 20px; flex-wrap: wrap; justify-content: center;">
+            <div v-for="image in patientDetails.image_records" :key="image.image_path">
+                  <img :src="getImageUrl(image.image_path)" :alt="image.image_type" class="images">
+            </div>
+          </div>
         </div>
-      </div>
         <!-- <div class="booking-record">
           <h5>Booking History</h5>
           <div class="booking-details">
@@ -150,7 +152,9 @@
 }
 
 img.images {
-    width: 200px;
+    width: 250px;
+    height: 250px;
+    object-fit: cover;
 }
 .medical-details {
     display: grid;

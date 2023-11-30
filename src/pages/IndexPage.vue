@@ -388,17 +388,20 @@ const onDecode = (data) => {
         return;
       }
         // Map user_id and id properties
-        scheduleDialogData.value.doctor = response.schedule.dentist_name,
-        scheduleDialogData.value.details = response.schedule.specialization,
-        scheduleDialogData.value.date = response.schedule.date,
-        scheduleDialogData.value.time = convertTo12HourFormat(response.schedule.time_start),
-        scheduleDialogData.value.services = response.schedule.services,
-        scheduleDialogData.value.price = response.schedule.price,
-        scheduleDialogData.value.duration = parseFloat(response.schedule.duration),
-        scheduleDialogData.value.bgcolor = response.schedule.booked === 1 ? "red" : "green",
-        scheduleDialogData.value.icon = "fas fa-handshake",
-        scheduleDialogData.value.booked = response.schedule.booked, // Add booked property
-        scheduleDialogData.value.name = response.schedule.bookings[0].patient_name, // Add booked property
+        if (scheduleDialogData.value) {
+          scheduleDialogData.value.doctor = response.schedule.dentist_name,
+          scheduleDialogData.value.details = response.schedule.specialization,
+          scheduleDialogData.value.date = response.schedule.date,
+          scheduleDialogData.value.time = convertTo12HourFormat(response.schedule.time_start),
+          scheduleDialogData.value.services = response.schedule.services,
+          scheduleDialogData.value.price = response.schedule.price,
+          scheduleDialogData.value.duration = parseFloat(response.schedule.duration),
+          scheduleDialogData.value.bgcolor = response.schedule.booked === 1 ? "red" : "green",
+          scheduleDialogData.value.icon = "fas fa-handshake",
+          scheduleDialogData.value.booked = response.schedule.booked, // Add booked property
+          scheduleDialogData.value.name = response.schedule.bookings[0].patient_name // Add booked property
+        
+        }
         
 
       console.log(response);
@@ -442,7 +445,7 @@ const ph = ref('');
 const loading = ref(false);
 const doctors_id = ref(null);
 const duration = ref(null);
-const scheduleDialogData = ref(null);
+const scheduleDialogData = ref({});
 const selectedDate = ref(today());
 
 const services = ref([]);

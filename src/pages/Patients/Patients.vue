@@ -652,7 +652,9 @@
             <!-- Display schedule details in the dialog -->
             <div v-if="selectedPatient"  style="display: flex; gap: 20px; flex-wrap: wrap; justify-content: center;">
               <div v-for="image in selectedPatient.image_records" :key="image.image_path">
-                  <img :src="getImageUrl(image.image_path)" :alt="image.image_type" class="images">
+                <a :href="getImageUrl(image.image_path)" target="_blank">
+                  <img :src="getImageUrl(image.image_path)" :alt="image.image_type" class="images" />
+                </a>
               </div>
              
             </div>
@@ -1159,7 +1161,8 @@ loadData();
 <style scoped>
 
 img.images {
-    width: 150px;
+    width: 250px;
+    height: 250px;
     object-fit: cover;
 }
 </style>
