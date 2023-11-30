@@ -52,6 +52,12 @@
           class="q-mt-md q-mb-md drawerActive text-white"
           v-if="hasPermission('ADMIN')"
         />
+        <q-btn
+          label="Scan QR"
+          @click="qrMode=true"
+          class="q-mt-md q-mb-md drawerActive text-white"
+          v-if="hasPermission('ADMIN')"
+        />
         <q-dialog v-model="formSchedule" persistent transition-show="scale" @hide="onHide">
       <q-card style="width: 650px; max-width: 80vw">
         <q-toolbar>
@@ -81,7 +87,7 @@
                     :rules="[rules.requiredField]"
                   />
                 </div>
-                <q-label><b>Select Service:</b></q-label>
+                <!-- <q-label><b>Select Service:</b></q-label>
                 <div
                   class="q-col col-12 col-sm-12 col-md-12"
                  
@@ -97,7 +103,7 @@
               />
 
 
-                </div>
+                </div> -->
               
                 
                 <div class="q-col col-12 col-sm-6 col-md-6">
@@ -136,7 +142,7 @@
                  </div>
 
                 
-              <div class="q-col col-12 col-sm-6 col-md-12">
+              <!-- <div class="q-col col-12 col-sm-6 col-md-12">
                   <q-select
                     class="custom-input-select col-5"
                     outlined
@@ -147,9 +153,8 @@
                     option-label="value"
                     label="Select Duration"
                     dense
-                    :rules="[rules.requiredField]"
                   />
-                </div>
+                </div> -->
               </div>
             </div>
        
@@ -185,18 +190,52 @@
           <q-card-section>
             <!-- Display schedule details in the dialog -->
             <div v-if="scheduleDialogData">
+              <div v-if="scheduleDialogData.name"><strong>Booked By:</strong> {{ scheduleDialogData.name }}</div>
               <div><strong>Doctor:</strong> {{ scheduleDialogData.doctor }}</div>
               <div><strong>Specialization:</strong> {{ scheduleDialogData.details }}</div>
-              <div><strong>Services: </strong>
-                <span v-for="(service, index) in scheduleDialogData.services" :key="index">
-                   {{ getServiceDisplayName(service) }}
-                  <!-- Add a comma and space after each service except the last one -->
-                  <span v-if="index < scheduleDialogData.services.length - 1">, </span>
-                </span>
+              <div v-if="hasPermission('PATIENT')">
+                <div v-if="scheduleDialogData.booked == false">
+                    <div><strong>Select Services: </strong> </div>
+                    <!-- <q-checkbox
+                    outlined
+                    :options="servicesData"
+                    v-model="formInput.service_type"
+                    option-value="value"
+                    option-label="label"
+                    dense
+                      /> -->
+
+                    <q-select
+                      :readonly="scheduleDialogData.booked == true"
+                      class="custom-input-select col-5"
+                      outlined
+                      v-model="formInput.services"
+                      :options="servicesData"
+                      option-value="id"
+                      option-label="service_type"
+                      map-options
+                      emit-value
+                      dense
+                      multiple
+                      clearable
+                      :rules="[rules.requiredField]"
+                    />
+                </div>
+                <div v-else>
+                  <strong>Services:</strong>
+                  <ul>
+                    <li v-for="selectedService in formInput.services" :key="selectedService">
+                      {{ selectedService }}
+                    </li>
+                  </ul>
+                  <div><strong>Total Price:</strong> ₱{{ scheduleDialogData.price }}</div>
+                  <div><strong>Duration:</strong> {{ scheduleDialogData.duration }} minutes</div>
+                </div>
               </div>
+             
               <div><strong>Date:</strong> {{ scheduleDialogData.date }}</div>
               <div><strong>Time:</strong> {{ scheduleDialogData.time }}</div>
-              <div><strong>Duration:</strong> {{ scheduleDialogData.duration }} minutes</div>
+              <!-- <div><strong>Duration:</strong> {{ scheduleDialogData.duration }} minutes</div> -->
               <div><strong>Status:</strong> {{ scheduleDialogData.booked === 0 ? 'Available' : 'Already booked' }}</div>
                 <div class="row justify-start" v-if="scheduleDialogData.booked == false">
                   <q-btn
@@ -208,10 +247,98 @@
 
                   />
                 </div>
+                <QRCodeVue3
+                    v-if="scheduleDialogData.booked == true && hasPermission('PATIENT')" 
+                    :width="250"
+                    :height="250"
+                    :value="scheduleDialogData.id+'+'+scheduleDialogData.date"
+
+                    :qrOptions="{
+                      typeNumber: 0,
+                      mode: 'Byte',
+                      errorCorrectionLevel: 'H',
+                    }"
+                    :imageOptions="{
+                      hideBackgroundDots: true,
+                      imageSize: 0.4,
+                      margin: 0,
+                    }"
+                    :dotsOptions="{
+                      type: 'square',
+                      color: 'black',
+                      gradient: {
+                        type: 'linear',
+                        rotation: 0,
+                        colorStops: [
+                          { offset: 0, color: 'black' },
+                          { offset: 1, color: 'black' },
+                        ],
+                      },
+                    }"
+                    :corners-square-options="{
+                      type: 'square',
+                      color: 'black',
+
+                    }"
+                    :corners-dot-options="{
+                      type: 'square',
+                      color: 'black',
+
+                    }"
+                    :backgroundOptions="{ color: '#ffffff' }"
+
+                    fileExt="png"
+                    :download="false"
+                    myclass="my-qur"
+                    imgclass="img-qr"
+                    downloadButton="my-button"
+                    :downloadOptions="{ name: 'vqr', extension: 'png' }"
+                  />
             </div>
           </q-card-section>
         </q-card>
       </q-dialog>
+
+      <q-dialog
+      v-model="qrMode"
+      persistent
+      transition-show="fade"
+      transition-hide="fade"
+      class="qr-dialog"
+    >
+      <q-card style="width: 360px; height: 270px">
+        <div class="qr-background">
+          <div class="qr-square"></div>
+        </div>
+        <q-toolbar style="position: absolute; background: none; z-index: 1">
+          <!-- <q-avatar>
+              <img src="https://cdn.quasar.dev/logo-v2/svg/logo.svg">
+            </q-avatar> -->
+
+          <q-btn flat round dense icon="close" v-close-popup style="color: #fff"/>
+          <span
+            style="
+              text-align: center;
+              font-weight: bold;
+              width: 100%;
+              margin-left: -35px;
+              font-size: 20px;
+            "
+            >{{ qrModeTitle }}</span
+          >
+        </q-toolbar>
+        <div class="stream">
+          <qr-stream
+            @camera-on="onReady"
+            key="qr-component"
+            @decode="onDecode"
+            class="mb"
+          >
+            <div style="color: red" class="frame"></div>
+          </qr-stream>
+        </div>
+      </q-card>
+    </q-dialog>
     </div>
     
   </template>
@@ -224,6 +351,8 @@ import {
   today
 } from '@quasar/quasar-ui-qcalendar/src/index.js';
 import api from "../pages/commonAPI/";
+import QRCodeVue3 from "qrcode-vue3";
+import { QrcodeStream, QrStream, QrCapture, QrDropzone } from "vue3-qr-reader";
 import { ref, computed, onMounted, reactive } from 'vue';
 import { exportFile, useQuasar, copyToClipboard } from "quasar";
 import NavigationBar from '../components/NavigationBar.vue';
@@ -234,6 +363,65 @@ const store = auth();
 const formProfile = ref(false);
 const schedules = ref([]);
 const eventsMap = ref([]);
+const qrMode = ref(false);
+
+const onDecode = (data) => {
+  // console.log("wew");
+  if (data) {
+    console.log(data);
+
+    // scanAccount(decodedQR.value);
+    // qrMode.value = false;
+    // qrAccountActive.value = true;
+    let id = data.split('+')[0];
+    
+  api
+    .getSchedule(id)
+    .then((response) => {
+      if (response == "401") {
+        $q.notify({
+          color: "negative",
+          position: "top",
+          message: "Unauthenticated",
+          icon: "report_problem",
+        });
+        return;
+      }
+        // Map user_id and id properties
+        if (scheduleDialogData.value) {
+          scheduleDialogData.value.doctor = response.schedule.dentist_name,
+          scheduleDialogData.value.details = response.schedule.specialization,
+          scheduleDialogData.value.date = response.schedule.date,
+          scheduleDialogData.value.time = convertTo12HourFormat(response.schedule.time_start),
+          scheduleDialogData.value.services = response.schedule.services,
+          scheduleDialogData.value.price = response.schedule.price,
+          scheduleDialogData.value.duration = parseFloat(response.schedule.duration),
+          scheduleDialogData.value.bgcolor = response.schedule.booked === 1 ? "red" : "green",
+          scheduleDialogData.value.icon = "fas fa-handshake",
+          scheduleDialogData.value.booked = response.schedule.booked, // Add booked property
+          scheduleDialogData.value.name = response.schedule.bookings[0].patient_name // Add booked property
+        
+        }
+        
+
+      console.log(response);
+      viewSchedule.value = true;
+    })
+    .catch((e) => {
+      $q.notify({
+        color: "negative",
+        position: "top",
+        message: "Loading failed",
+        icon: "report_problem",
+      });
+      console.log(e);
+    });
+
+  }
+};
+
+
+
 
 
 const convertTo12HourFormat = (time24) => {
@@ -244,57 +432,6 @@ const convertTo12HourFormat = (time24) => {
   return `${formattedHour}:${minute} ${ampm}`;
 };
 
-// Function to fetch schedules
-const fetchSchedules = () => {
-  api.viewAllSched()
-    .then((response) => {
-      schedules.value = response.schedules;
-      eventsMap.value = [];
-      // Populate eventsMap using response data
-      response.schedules.forEach((schedule) => {
-        console.log(schedule.date);
-        if (!eventsMap.value[schedule.date]) {
-          eventsMap.value[schedule.date] = [];
-        }
-        eventsMap.value[schedule.date].push({
-          id: schedule.id,
-          doctor: schedule.dentist_name,
-          details: schedule.specialization,
-          services: schedule.services,
-          date: schedule.date,
-          time: convertTo12HourFormat(schedule.time_start),
-          duration: parseFloat(schedule.duration),
-          bgcolor: schedule.booked === 1 ? 'red' : 'green',
-          icon: 'fas fa-handshake',
-          booked: schedule.booked, // Add booked property
-        });
-        // console.log(eventsMap[schedule.date]);
-      });
-      console.log('Schedules successfully fetched:', schedules.value);
-    })
-    .catch((error) => {
-      console.error(error);
-    });
-};
-
-
-const getServiceDisplayName = (service) => {
-  const serviceNames = {
-    dental_restoration: 'Dental Restoration',
-    tooth_extract: 'Tooth Extraction',
-    dentures: 'Dentures',
-    odontectomy: 'Odontectomy',
-    root_canal: 'Root Canal',
-    braces: 'Braces',
-    jacket_crown: 'Jacket Crown',
-    oral_prophylaxis: 'Oral Prophylaxis',
-    consultation: 'Consultation',
-  };
-  return serviceNames[service] || service;
-};
-
-
-
 // Your formInput and related variables
 const formSchedule = ref(false);
 const viewSchedule = ref(false);
@@ -302,39 +439,100 @@ const submitting = ref(false);
 const dateValue = ref('');
 const addTransaction = ref(true);
 const time_start = ref('');
-const formInput = ref({
-  services: []
-});
+const formInput = ref({services: []});
+
 const ph = ref('');
 const loading = ref(false);
 const doctors_id = ref(null);
 const duration = ref(null);
-const scheduleDialogData = ref(null);
+const scheduleDialogData = ref({});
 const selectedDate = ref(today());
 
+const services = ref([]);
 
-const selectedDuration = [
-  { duration: 30, value: '30 mins' },
-  { duration: 60, value: '1 hour' },
-  { duration: 90, value: '1 hour and 30 mins' },
-];
 
-const selectedDurationValue = computed(() => {
-  const selectedOption = selectedDuration.find((option) => option.duration === formInput.value.duration);
-  return selectedOption ? selectedOption.duration : null;
-});
+const servicesData = ref([]);
 
-const services = ref([
-  { label: 'Dental Restoration', value: 'dental_restoration' },
-  { label: 'Tooth Extraction', value: 'tooth_extract', color: 'green' },
-  { label: 'Odontectomy', value: 'odontectomy', color: 'green' },
-  { label: 'Dentures', value: 'dentures', color: 'green' },
-  { label: 'Root Canal', value: 'root_canal', color: 'green' },
-  { label: 'Braces', value: 'braces', color: 'green' }, // Fixed the typo here (Bracess to Braces)
-  { label: 'Jacket Crown', value: 'jacket_crown', color: 'green' },
-  { label: 'Oral Prophylaxis', value: 'oral_prophylaxis', color: 'green' },
-  { label: 'Consultation', value: 'consultation', color: 'green' }
-]);
+
+
+const loadData = async () => {
+  loading.value = true;
+
+  try {
+    // Fetch services
+    const servicesResponse = await api.viewAllServices();
+    if (servicesResponse === "401") {
+      $q.notify({
+        color: "negative",
+        position: "top",
+        message: "Unauthenticated",
+        icon: "report_problem",
+      });
+    } else {
+      console.log("Services response:", servicesResponse);
+      services.value = servicesResponse;
+      
+      servicesData.value = servicesResponse.map((services) => ({
+        id: services.id, // Assuming "id" is the actual field name in the response
+        service_type: services.service_type+" - ₱"+services.price, // Assuming "name" is the actual field name in the response
+        duration: services.duration,
+        price: services.price,
+        
+      }));
+
+      console.log("Services nii:", servicesData);
+
+  
+
+      // Fetch schedules
+      const schedulesResponse = await api.viewAllSched();
+      schedules.value = schedulesResponse.schedules;
+      eventsMap.value = [];
+
+      // Populate eventsMap using response data
+      schedulesResponse.schedules.forEach((schedule) => {
+        console.log("Hello", schedule.services);
+        if (!eventsMap.value[schedule.date]) {
+          eventsMap.value[schedule.date] = [];
+        }
+        eventsMap.value[schedule.date].push({
+          id: schedule.id,
+          doctor: schedule.dentist_name,
+          details: schedule.specialization,
+          date: schedule.date,
+          time: convertTo12HourFormat(schedule.time_start),
+          services: schedule.services,
+          price: schedule.price,
+          duration: parseFloat(schedule.duration),
+          bgcolor: schedule.booked === 1 ? "red" : "green",
+          icon: "fas fa-handshake",
+          booked: schedule.booked, // Add booked property
+        });
+      });
+
+      console.log("Services successfully fetched:", services.value);
+      console.log("Schedules successfully fetched:", schedules.value);
+    }
+  } catch (error) {
+    console.error(error);
+    $q.notify({
+      color: "negative",
+      position: "top",
+      message: "Loading data failed",
+      icon: "report_problem",
+    });
+  } finally {
+    loading.value = false;
+  }
+};
+
+
+
+// const formBooking = ref({
+//   service_type: Object.fromEntries(
+//     services.value.map(service => [service.id, false])
+//   )
+// });
 
 const rules = {
   requiredField: (v) => !!v || "Required field.",
@@ -345,6 +543,7 @@ const rules = {
 const openScheduleDialog = (schedule) => {
   scheduleDialogData.value = schedule;
   viewSchedule.value = true;
+  formInput.value.services = schedule.services;
 };
 
 const closeScheduleDialog = () => {
@@ -460,6 +659,7 @@ const addSchedule = () => {
 
 const onHide = () => {
   // Implement the onHide method
+  formInput.service_type = [];
 }
 
 const onReset = () => {
@@ -476,7 +676,7 @@ const getDoctors = () => {
         dentist: doctor.dentist, // Assuming "name" is the actual field name in the response
         
       }));
-      console.log(doctorsOptions);
+      console.log("Doctors nii:", doctorsOptions);
 
       
 
@@ -502,27 +702,6 @@ const hasPermission = (authority) => {
   return false;
 };
 
-// const getSchedule = () => {
-//   api
-//     .viewAllSched()
-//     .then((response) => {
-//       console.log(response);
-//       viewSched.value = response.schedules;
-
-//       loading.value = false;
-//     })
-//     .catch((error) => {
-//       // console.log(error);
-//       loading.value = false;
-//       $q.notify({
-//         color: "negative",
-//         position: "top",
-//         message: "Failed to load Schedules",
-//         icon: "report_problem",
-//       });
-//       loading.value = false;
-//     });
-// };
 
 const onSubmit = (val) => {
   // add
@@ -558,7 +737,8 @@ const onSubmit = (val) => {
             icon: "cloud_done",
             message: "New Schedule has been saved!",
           });
-          fetchSchedules();
+          // fetchSchedules();
+          loadData();
           onReset();
           submitting.value = false;
           formSchedule.value = false;
@@ -583,8 +763,9 @@ const bookNow = (val) => {
       cancel: true,
     }).onOk(() => {
       // submitting.value = true;
+     
       api
-        .updateSchedule(scheduleDialogData.value.id)
+        .updateSchedule(scheduleDialogData.value.id, formInput.value)
         .then((response) => {
           console.log(response);
           if (response.data?.error || response.data?.message) {
@@ -606,6 +787,8 @@ const bookNow = (val) => {
               icon: "cloud_done",
               message: "Booked successfully!",
             });
+
+            loadData();
             // submitting.value = false;
             // formProfile.value = false;
             // onReset();
@@ -623,8 +806,15 @@ const bookNow = (val) => {
     });
 }
 
+
+// api.sendSMS();
+
+loadData();
+
+
+
 getDoctors();
-fetchSchedules();
+// fetchSchedules();
 // getSchedule();
 </script>
   

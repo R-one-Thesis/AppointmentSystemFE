@@ -400,7 +400,7 @@
                     <span
                       >Please check if you have or had any of the following:</span>
                   </div>
-                  <!-- {{ formInput }} -->
+                  <!-- {{ formInput.user_id }} -->
                   <div class="q-col col-12 col-sm-12 col-md-12">
                         <q-option-group
                         :options="conditions"
@@ -465,7 +465,6 @@
                       <q-radio v-model="formInput.pregnant" :val=false label="No" :disable="viewing !== false"/>
 
                   </div>
-                  {{ formInput }}
                   <div class="q-col col-12 col-sm-12 col-md-12" v-if="formInput.sex == 'Female'">
                    <q-input
                      class="custom-input"
@@ -542,6 +541,7 @@
                     size="sm"
                     icon="zoom_in"
                     @click="viewForm(props)"
+                    title="View Patient"
                   />
 
                   <q-btn
@@ -551,6 +551,7 @@
                     color="positive"
                     size="sm"
                     @click="EditRecord(props)"
+                    title="Edit Patient"
                   >
                     <i class="fas fa-edit"></i>
                   </q-btn>
@@ -563,7 +564,22 @@
                     size="sm"
                     icon="delete"
                     @click="DeleteRecord(props)"
+                    title="Delete Patient"
                   />
+                  
+                  <q-btn
+                    class="q-mr-xs"
+                    round
+                    dense
+                    color="blue"
+                    size="sm"
+                    @click="viewDocument(props.row)"
+                    title="View Document"
+                    v-model="formInput.user_id"
+                    style="margin-left: 5px;"
+                  >
+                  <i class="fas fa-image"></i>
+                  </q-btn>
 
               </q-td>
             </template>
@@ -624,6 +640,46 @@
         </template>
 
       </q-table>
+
+      <q-dialog v-model="viewImages" persistent transition-show="flip-down" @hide="onHide">
+        <q-card style="width: 1000px; max-width: 80vw; overflow-x: hidden;">
+          <q-toolbar>
+            <q-toolbar-title><span class="text-weight-bold">Patient Documents</span></q-toolbar-title>
+            <q-btn flat round dense icon="close" v-close-popup />
+          </q-toolbar>
+          <q-card-section>
+            <q-form @submit="addImg" @reset="onReset" class="q-gutter-sd" enctype="multipart/form-data">
+            <!-- Display schedule details in the dialog -->
+            <div v-if="selectedPatient"  style="display: flex; gap: 20px; flex-wrap: wrap; justify-content: center;">
+              <div v-for="image in selectedPatient.image_records" :key="image.image_path">
+                <a :href="getImageUrl(image.image_path)" target="_blank">
+                  <img :src="getImageUrl(image.image_path)" :alt="image.image_type" class="images" />
+                </a>
+              </div>
+             
+            </div>
+            <q-label><b>Upload Document</b></q-label>
+                <div class="q-col col-12 col-sm-12 col-md-12">
+                  <input 
+                    class="custom-input"
+                    type="file" 
+                    outlined
+                    dense
+                    accept="image/*" 
+                    :rules="[rules.requiredField]"
+                    @change="onFileChange" />
+                </div>
+
+              <q-btn
+                  :loading="submitting"
+                  label="Save"
+                  type="submit"
+                  class="drawerActive"
+                />
+          </q-form>
+          </q-card-section>
+        </q-card>
+      </q-dialog>
     </div>
 
   </template>
@@ -650,6 +706,73 @@ const selected = ref([]);
 const viewing = ref(false);
 const editMode = ref(false); // Initially, we are not in edit mode
 const recordViewing = ref(false);
+const viewImages = ref(false);
+const selectedPatient = ref(null);
+const image = ref({image: []});
+
+
+const viewDocument = (patient) => {
+  selectedPatient.value = patient;
+  viewImages.value = true;
+};
+
+const getImageUrl = (imageName) => {
+      return `http://127.0.0.1:8000/${imageName}`;
+  };
+
+const onFileChange = (event) => {
+  const file = event.target.files[0];
+  image.value.image = file;
+  console.log(file);
+};
+
+
+const addImg = (val) => {
+  // add
+    console.log(image.value.image);
+    const formData = new FormData();
+    formData.append('image', image.value.image);
+    submitting.value = true;
+    api
+    .addDocument(formData, selectedPatient.value.id)
+      .then((response) => {
+        console.log(response);
+        if (response.data?.error || response.data?.message) {
+          $q.notify({
+            color: "negative",
+            position: "top",
+            message:
+              JSON.stringify(response.data?.error) ??
+              JSON.stringify(response.data?.message) ??
+              "Failed to Add Schedule",
+            icon: "report_problem",
+          });
+          submitting.value = false;
+        } else {
+          $q.notify({
+            color: "green-4",
+            textColor: "white",
+            icon: "cloud_done",
+            message: "New Schedule has been saved!",
+          });
+          submitting.value = false;
+          viewImages.value = false;
+          loadData();
+        }
+      })
+      .catch((error) => {
+        $q.notify({
+          color: "negative",
+          position: "top",
+          message: error.message ?? "Failed to add Schedule",
+          icon: "report_problem",
+        });
+        submitting.value = false;
+      });
+};
+
+
+
 
 const rules = ref({
   requiredField: (v) => !!v || "Required field.",
@@ -776,7 +899,6 @@ const columns = [
 
 
 
-
 const AddPatient = () => {
   formInput.value.conditions = [];
   formProfile.value = true;
@@ -784,6 +906,7 @@ const AddPatient = () => {
   editMode.value = false;
   recordViewing.value = false;
 };
+
 
 
 const EditRecord = (val) => {
@@ -846,9 +969,9 @@ const onReset = () => {
 
 const DeleteRecord = (val) => {
   $q.dialog({
-    title: "Delete Record",
+    title: "Archive Patient",
     message:
-      "Are you sure you want to delete, profile: " +
+      "Are you sure you want to archive, profile: " +
       val.row.first_name +
 
       "?",
@@ -1008,6 +1131,14 @@ const loadData = () => {
         loading.value = false;
         return;
       }
+        // Map user_id and id properties
+        const mappedPatients = response.data.map(patient => ({
+        user_id: patient.user_id,
+        id: patient.id,
+        image_records: patient.image_records,
+      }));
+
+      console.log(mappedPatients);
       console.log(response);
       tablerows.value = response.data;
       loading.value = false;
@@ -1026,3 +1157,12 @@ const loadData = () => {
 loadData();
 
 </script>
+
+<style scoped>
+
+img.images {
+    width: 250px;
+    height: 250px;
+    object-fit: cover;
+}
+</style>

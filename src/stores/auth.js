@@ -27,6 +27,8 @@ export const auth = defineStore('user', {
     async login(userDetails){
         
         try {
+
+
             const data = await api.post("api/login", userDetails)
             console.log(data.data)
             if(data.data.user_type == 'patient') {

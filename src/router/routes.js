@@ -14,6 +14,29 @@ const routes = [
         meta: { icon: 'dashboard', roles: ['any'] }
       },
 
+
+      {
+        path: '/',
+        meta: { label: 'Services', icon: 'group', roles: ['ADMIN'] }, // Group label and icon
+        children: [
+          {
+            path: '/Services', 
+            component: () => import('pages/Services/Services.vue'),
+            name: 'Dental Services',
+            meta: { icon: 'fas fa-tooth', roles: ['any'] }
+          },
+
+          {
+            path: '/Doctors', 
+            component: () => import('pages/Doctors/Doctors.vue'),
+            name: 'Dentists',
+            meta: { icon: 'fas fa-user-md', roles: ['any'] }
+          },
+        
+          
+        ]
+      },
+
       {
         path: '/',
         meta: { label: 'Patients', icon: 'group', roles: ['ADMIN'] }, // Group label and icon
@@ -52,7 +75,7 @@ const routes = [
             path: '/Profile', 
             component: () => import('pages/Profile/Profile.vue'),
             name: 'My Profile',
-            meta: { icon: 'fas fa-users', roles: ['PATIENT'] }
+            meta: { icon: 'fas fa-user-circle', roles: ['PATIENT'] }
           },
           // Add more routes for the Management group here
         ]

@@ -69,6 +69,24 @@ export default {
         return error.response;
       }
     },
+
+
+    async addDocument(formData, patientID) {
+      try {
+        const response = await api.post(`api/addPatientImages/${patientID}`, formData, {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          },
+        });
+        if (response) {
+          return response.data;
+        }
+      } catch (error) {
+        console.log(error);
+        return error.response;
+      }
+    },
+    
   
   
    
