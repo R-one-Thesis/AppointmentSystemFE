@@ -791,7 +791,8 @@ const bookNow = (val) => {
             loadData();
             // submitting.value = false;
             // formProfile.value = false;
-            // onReset();
+            onReset();
+            viewSchedule.value = false;
           }
         })
         .catch((error) => {

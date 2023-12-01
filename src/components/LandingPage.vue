@@ -164,15 +164,7 @@
 
   const getServiceDisplayName = (service) => {
   const serviceNames = {
-    dental_restoration: 'Dental Restoration',
-    tooth_extract: 'Tooth Extraction',
-    dentures: 'Dentures',
-    odontectomy: 'Odontectomy',
-    root_canal: 'Root Canal',
-    braces: 'Braces',
-    jacket_crown: 'Jacket Crown',
-    oral_prophylaxis: 'Oral Prophylaxis',
-    consultation: 'Consultation',
+    
   };
   return serviceNames[service] || service;
 };
