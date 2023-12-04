@@ -119,6 +119,19 @@ export default {
       }
     },
 
+    async getTodaySched() {
+   
+      try {
+        const response = await api.get("api/viewTodaysSchedules"); // Use the 'api' instance here
+        if (response) {
+          return response.data;
+        }
+      } catch (error) {
+        console.log(error);
+        return error.response;
+      }
+    },
+
 
  
 };

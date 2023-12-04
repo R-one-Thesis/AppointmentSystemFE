@@ -7,6 +7,7 @@
       </div>
   
       <div class="calendar-container">
+        <div>
         <q-calendar-month
           ref="calendar"
           v-model="selectedDate"
@@ -43,6 +44,23 @@
             </template>
           </template>
         </q-calendar-month>
+        </div>
+        <div class="todaySched">
+          <h4>Schedule Today</h4>
+            <ul>
+              <li v-for="schedule in schedules" :key="schedule.id">
+                <p><strong>{{ schedule.dentist_name }}</strong></p>
+                <p>Date: {{ schedule.date }}</p>
+                <p>Time: {{ schedule.time_start }}</p>
+                <!-- Add more details based on your requirements -->
+                <hr />
+              </li>
+              <!-- Add a message if there are no schedules for today -->
+              <li v-if="schedules.length === 0">
+                <p>No schedules for today.</p>
+              </li>
+            </ul>
+        </div>
       </div>
   
       <div class="add-schedule-section add-sched">
@@ -804,8 +822,45 @@ const bookNow = (val) => {
     });
 }
 
+const todaySchedule = () => {
+  loading.value = true;
+  const todayDate = new Date().toISOString().split('T')[0]; // Get today's date in 'YYYY-MM-DD' format
+  api
+    .getTodaySched()
+    .then((response) => {
+      if (response == "401") {
+        $q.notify({
+          color: "negative",
+          position: "top",
+          message: "Unauthenticated",
+          icon: "report_problem",
+        });
+        loading.value = false;
+        return;
+      }
 
-// api.sendSMS();
+      // Ensure that response.schedules is an array
+      const schedulesArray = Array.isArray(response.schedules) ? response.schedules : [];
+
+      // Filter schedules for the current date
+      schedules.value = schedulesArray.filter(schedule => schedule.date === todayDate);
+
+      console.log("today schedule", response);
+      loading.value = false;
+    })
+    .catch(() => {
+      $q.notify({
+        color: "negative",
+        position: "top",
+        message: "Loading failed",
+        icon: "report_problem",
+      });
+      loading.value = false;
+    });
+};
+
+todaySchedule();
+
 
 loadData();
 
@@ -854,9 +909,26 @@ getDoctors();
     height: 100%;
   }
    
+
+  .calendar-container {
+    display: grid;
+    grid-template-columns: 70% 30%;
+    gap: 15px;
+    padding: 10px;
+    flex-wrap: wrap;
+}
+
+  .todaySched {
+    color: #fff;
+    padding: 15px;
+    box-shadow: rgba(17, 17, 26, 0.05) 0px 1px 0px, rgba(17, 17, 26, 0.1) 0px 0px 8px;
+    background: var(--q-primary) !important;
+  }
+  
   
   .text-white {
     color: white;
+
   
   }
   
