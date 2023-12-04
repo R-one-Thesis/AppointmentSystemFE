@@ -192,7 +192,6 @@
             <div v-if="scheduleDialogData">
               <div v-if="scheduleDialogData.name"><strong>Booked By:</strong> {{ scheduleDialogData.name }}</div>
               <div><strong>Doctor:</strong> {{ scheduleDialogData.doctor }}</div>
-              <div><strong>Specialization:</strong> {{ scheduleDialogData.details }}</div>
               <div v-if="hasPermission('PATIENT')">
                 <div v-if="scheduleDialogData.booked == false">
                     <div><strong>Select Services: </strong> </div>
@@ -390,7 +389,6 @@ const onDecode = (data) => {
         // Map user_id and id properties
         if (scheduleDialogData.value) {
           scheduleDialogData.value.doctor = response.schedule.dentist_name,
-          scheduleDialogData.value.details = response.schedule.specialization,
           scheduleDialogData.value.date = response.schedule.date,
           scheduleDialogData.value.time = convertTo12HourFormat(response.schedule.time_start),
           scheduleDialogData.value.services = response.schedule.services,
@@ -498,7 +496,6 @@ const loadData = async () => {
         eventsMap.value[schedule.date].push({
           id: schedule.id,
           doctor: schedule.dentist_name,
-          details: schedule.specialization,
           date: schedule.date,
           time: convertTo12HourFormat(schedule.time_start),
           services: schedule.services,

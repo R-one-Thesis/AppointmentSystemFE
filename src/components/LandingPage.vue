@@ -65,7 +65,6 @@
             <!-- Display schedule details in the dialog -->
             <div v-if="scheduleDialogData">
               <div><strong>Doctor:</strong> {{ scheduleDialogData.doctor }}</div>
-              <div><strong>Specialization:</strong> {{ scheduleDialogData.details }}</div>
               <div v-if="scheduleDialogData.booked == true"><strong>Services: </strong>
                 <span v-for="(service, index) in scheduleDialogData.services" :key="index">
                    {{ getServiceDisplayName(service) }}
@@ -144,7 +143,6 @@
         eventsMap.value[schedule.date].push({
           id: schedule.id,
           doctor: schedule.dentist_name,
-          details: schedule.specialization,
           services: schedule.services,
           date: schedule.date,
           time: convertTo12HourFormat(schedule.time_start),

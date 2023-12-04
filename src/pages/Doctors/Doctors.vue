@@ -50,20 +50,6 @@
                       outlined
                       dense
                       stack-label
-                      v-model="formInput.specialization"
-                      label="Specialization"
-                      lazy-rules
-                      :rules="[rules.requiredField]"
-                      :readonly="viewing != false"
-                    />
-                  </div>
-
-                  <div class="q-col col-12 col-sm-12 col-md-12">
-                    <q-input
-                      class="custom-input"
-                      outlined
-                      dense
-                      stack-label
                       v-model="formInput.mobile_number"
                       label="Mobile Number"
                       lazy-rules
@@ -300,14 +286,6 @@ const columns = [
     field: "Dentist Name",
     field: (row) => row.dentist,
     name: "Dentist Name",
-    sortable: true,
-  },
-  {
-    align: "left",
-    label: "Specialization",
-    field: "Specialization",
-    field: (row) => row.specialization,
-    name: "Specialization",
     sortable: true,
   },
   {
