@@ -46,21 +46,22 @@
         </q-calendar-month>
         </div>
         <div class="todaySched">
-          <h4>Schedule Today</h4>
-            <ul>
-              <li v-for="schedule in schedules" :key="schedule.id">
-                <p><strong>{{ schedule.dentist_name }}</strong></p>
-                <p>Date: {{ schedule.date }}</p>
-                <p>Time: {{ schedule.time_start }}</p>
-                <!-- Add more details based on your requirements -->
-                <hr />
-              </li>
-              <!-- Add a message if there are no schedules for today -->
-              <li v-if="schedules.length === 0">
-                <p>No schedules for today.</p>
-              </li>
-            </ul>
+          <h4>Schedule Today - {{ todayDate }}</h4>
+          <ul>
+            <li v-for="schedule in scheduleKron" :key="schedule.id">
+              <p><strong>{{ schedule.dentist_name }}</strong></p>
+              <p>Date: {{ schedule.date }}</p>
+              <p>Time: {{ schedule.time_start }}</p>
+              <!-- Add more details based on your requirements -->
+              <hr />
+            </li>
+            <!-- Add a message if there are no schedules for today -->
+            <li v-if="scheduleKron.length === 0">
+              <p>No schedules for today.</p>
+            </li>
+          </ul>
         </div>
+
       </div>
   
       <div class="add-schedule-section add-sched">
@@ -379,6 +380,7 @@ const store = auth();
 
 const formProfile = ref(false);
 const schedules = ref([]);
+const scheduleKron = ref([]);
 const eventsMap = ref([]);
 const qrMode = ref(false);
 
@@ -772,81 +774,84 @@ const onSubmit = (val) => {
 };
 
 const bookNow = (val) => {
-  $q.dialog({
-      title: "Book Now",
-      message: "Are you sure you want to book a schedule?",
-      cancel: true,
-    }).onOk(() => {
-      // submitting.value = true;
-     
-      api
-        .updateSchedule(scheduleDialogData.value.id, formInput.value)
-        .then((response) => {
-          console.log(response);
-          if (response.data?.error || response.data?.message) {
-            $q.notify({
-              color: "negative",
-              position: "top",
-              message:
-                JSON.stringify(response.data?.error) ??
-                JSON.stringify(response.data?.message) ??
-                "Failed to Update Admin",
-              icon: "report_problem",
-            });
-            // submitting.value = false;
-          } else {
-            // Error response
-            $q.notify({
-              color: "green-4",
-              textColor: "white",
-              icon: "cloud_done",
-              message: "Booked successfully!",
-            });
+  const currentDate = new Date().toISOString().split('T')[0]; // Get today's date in 'YYYY-MM-DD' format
 
-            loadData();
-            // submitting.value = false;
-            // formProfile.value = false;
-            onReset();
-            viewSchedule.value = false;
-          }
-        })
-        .catch((error) => {
-          $q.notify({
-            color: "negative",
-            position: "top",
-            message: error.message ?? "Failed to Book a Schedule",
-            icon: "report_problem",
-          });
-          // submitting.value = false;
-        });
+  // Check if the selected date is not in the past
+  if (scheduleDialogData.value.date < currentDate) {
+    $q.notify({
+      color: 'negative',
+      position: 'top',
+      message: 'Booking is already expired. Please select a valid date.',
+      icon: 'report_problem',
     });
-}
+    return;
+  }
+
+  $q.dialog({
+    title: 'Book Now',
+    message: 'Are you sure you want to book a schedule?',
+    cancel: true,
+  }).onOk(() => {
+    api
+      .updateSchedule(scheduleDialogData.value.id, formInput.value)
+      .then((response) => {
+        console.log(response);
+        if (response.data?.error || response.data?.message) {
+          $q.notify({
+            color: 'negative',
+            position: 'top',
+            message:
+              JSON.stringify(response.data?.error) ??
+              JSON.stringify(response.data?.message) ??
+              'Failed to Update Admin',
+            icon: 'report_problem',
+          });
+        } else {
+          $q.notify({
+            color: 'green-4',
+            textColor: 'white',
+            icon: 'cloud_done',
+            message: 'Booked successfully!',
+          });
+
+          loadData();
+          onReset();
+          viewSchedule.value = false;
+        }
+      })
+      .catch((error) => {
+        $q.notify({
+          color: 'negative',
+          position: 'top',
+          message: error.message ?? 'Failed to Book a Schedule',
+          icon: 'report_problem',
+        });
+      });
+  });
+};
+
 
 const todaySchedule = () => {
   loading.value = true;
   const todayDate = new Date().toISOString().split('T')[0]; // Get today's date in 'YYYY-MM-DD' format
+  console.log(todayDate);
+  
   api
     .getTodaySched()
     .then((response) => {
-      if (response == "401") {
-        $q.notify({
-          color: "negative",
-          position: "top",
-          message: "Unauthenticated",
-          icon: "report_problem",
-        });
-        loading.value = false;
-        return;
+      if (response.message === "Schedules found for the date") {
+        // Ensure that response.schedules is an array
+        const schedulesArray = Array.isArray(response.schedules) ? response.schedules : [];
+
+        // Filter schedules for the current date
+        scheduleKron.value = schedulesArray.filter(schedule => schedule.date === todayDate);
+
+        console.log("today schedule", response);
+      } else {
+        // Handle the case when there are no schedules for today
+        scheduleKron.value = [];
+        console.log("No schedules for today", response);
       }
-
-      // Ensure that response.schedules is an array
-      const schedulesArray = Array.isArray(response.schedules) ? response.schedules : [];
-
-      // Filter schedules for the current date
-      schedules.value = schedulesArray.filter(schedule => schedule.date === todayDate);
-
-      console.log("today schedule", response);
-      loading.value = false;
     })
     .catch(() => {
       $q.notify({
@@ -855,9 +860,14 @@ const todaySchedule = () => {
         message: "Loading failed",
         icon: "report_problem",
       });
+    })
+    .finally(() => {
       loading.value = false;
     });
 };
+
+todaySchedule();
+
 
 todaySchedule();
 
