@@ -32,6 +32,13 @@ const routes = [
             name: 'Dentists',
             meta: { icon: 'fas fa-user-md', roles: ['any'] }
           },
+
+          {
+            path: '/Bookings', 
+            component: () => import('pages/Bookings/Bookings.vue'),
+            name: 'List of Bookings',
+            meta: { icon: 'fas fa-calendar-check', roles: ['any'] }
+          },
         
           
         ]

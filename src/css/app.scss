@@ -10,7 +10,7 @@ body  {
   font-family: 'Poppins', sans-serif;
 }
 
-h1, h2, h3, h4, h5, h6 {
+h1, h2, h3, h4, h5, h6, p {
   margin: 0;
 }
 
@@ -31,6 +31,15 @@ h1, h2, h3, h4, h5, h6 {
 .dark-mode .drawerActive {
   background-color: none !important;
   border-radius: 0;
+}
+
+.dark-mode .q-layout.q-layout--standard.darkModeClass span {
+  color: #000 !important;
+}
+
+.dark-mode .q-calendar-month__day, .dark-mode .q-calendar-month__day.q-outside, .dark-mode .q-calendar-month__day.q-disabled-day {
+  border-right: var(--calendar-border);
+  background: #000 !important;
 }
 
 .dark-mode .drawerActive {

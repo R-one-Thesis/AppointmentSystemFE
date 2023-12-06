@@ -237,6 +237,7 @@
                     round
                     dense
                     size="sm"
+                    color="secondary"
                     icon="zoom_in"
                     @click="viewForm(props)"
                   />
@@ -373,7 +374,7 @@ const columns = [
     align: "left",
     label: "Name",
     field: (row) =>
-      row.first_name + " " + (row.middle_name ?? "") + " " + row.last_name + " " + row.extension_name,
+      row.first_name + " " + (row.middle_name ?? "") + " " + row.last_name + " " + (row.extension_name ?? ""),
     name: "Name",
     sortable: true,
   },

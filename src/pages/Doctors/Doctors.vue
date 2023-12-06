@@ -123,6 +123,7 @@
                     dense
                     size="sm"
                     icon="zoom_in"
+                    color="secondary"
                     @click="viewForm(props)"
                   />
 
