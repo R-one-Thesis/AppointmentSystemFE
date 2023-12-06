@@ -51,7 +51,7 @@
             <li v-for="schedule in scheduleKron" :key="schedule.id">
               <p><strong>{{ schedule.dentist_name }}</strong></p>
               <p>Date: {{ schedule.date }}</p>
-              <p>Time: {{ schedule.time_start }}</p>
+              <p>Time: {{ formatTime(schedule.time_start) }}</p>
               <!-- Add more details based on your requirements -->
               <hr />
             </li>
@@ -830,44 +830,36 @@ const bookNow = (val) => {
   });
 };
 
-
-const todaySchedule = () => {
-  loading.value = true;
-  const todayDate = new Date().toISOString().split('T')[0]; // Get today's date in 'YYYY-MM-DD' format
-  console.log(todayDate);
-  
-  api
-    .getTodaySched()
-    .then((response) => {
-      if (response.message === "Schedules found for the date") {
-        // Ensure that response.schedules is an array
-        const schedulesArray = Array.isArray(response.schedules) ? response.schedules : [];
-
-        // Filter schedules for the current date
-        scheduleKron.value = schedulesArray.filter(schedule => schedule.date === todayDate);
-
-        console.log("today schedule", response);
-      } else {
-        // Handle the case when there are no schedules for today
-        scheduleKron.value = [];
-        console.log("No schedules for today", response);
-      }
-    })
-    .catch(() => {
-      $q.notify({
-        color: "negative",
-        position: "top",
-        message: "Loading failed",
-        icon: "report_problem",
-      });
-    })
-    .finally(() => {
-      loading.value = false;
-    });
+const todayDate = new Date().toISOString().split('T')[0]; // Get today's date in 'YYYY-MM-DD' format
+const formatTime = (time) => {
+  const timeDate = new Date(`1970-01-01T${time}`);
+  return timeDate.toLocaleTimeString('en-US', { hour: 'numeric', minute: 'numeric', hour12: true });
 };
 
-todaySchedule();
-
+const todaySchedule = async () => {
+  loading.value = true;
+  try {
+    const response = await api.getTodaySched();
+    if (response.message === "Schedules found for the date") {
+      const schedulesArray = Array.isArray(response.schedules) ? response.schedules : [];
+      scheduleKron.value = schedulesArray.filter(schedule => schedule.date === todayDate);
+      console.log("today schedule", response);
+      loadData();
+    } else {
+      scheduleKron.value = [];
+      console.log("No schedules for today", response);
+    }
+  } catch (error) {
+    $q.notify({
+      color: "negative",
+      position: "top",
+      message: "Loading failed",
+      icon: "report_problem",
+    });
+  } finally {
+    loading.value = false;
+  }
+};
 
 todaySchedule();
 
@@ -888,6 +880,12 @@ getDoctors();
       display: flex;
       justify-content: center;
       padding-top: 50px;
+      gap: 20px;
+  }
+
+  .subcontent {
+    height: 100vh;
+    overflow-x: hidden;
   }
 
   .year-header h4 {
@@ -922,9 +920,9 @@ getDoctors();
 
   .calendar-container {
     display: grid;
-    grid-template-columns: 70% 30%;
+    grid-template-columns: 65% 35%;
     gap: 15px;
-    padding: 10px;
+    padding: 30px;
     flex-wrap: wrap;
 }
 
