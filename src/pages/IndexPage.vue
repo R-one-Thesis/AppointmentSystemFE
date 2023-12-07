@@ -7,6 +7,7 @@
       </div>
   
       <div class="calendar-container">
+        <div>
         <q-calendar-month
           ref="calendar"
           v-model="selectedDate"
@@ -43,6 +44,24 @@
             </template>
           </template>
         </q-calendar-month>
+        </div>
+        <div class="todaySched">
+          <h4>Schedule Today - {{ todayDate }}</h4>
+          <ul>
+            <li v-for="schedule in scheduleKron" :key="schedule.id">
+              <p><strong>{{ schedule.dentist_name }}</strong></p>
+              <p>Date: {{ schedule.date }}</p>
+              <p>Time: {{ formatTime(schedule.time_start) }}</p>
+              <!-- Add more details based on your requirements -->
+              <hr />
+            </li>
+            <!-- Add a message if there are no schedules for today -->
+            <li v-if="scheduleKron.length === 0">
+              <p>No schedules for today.</p>
+            </li>
+          </ul>
+        </div>
+
       </div>
   
       <div class="add-schedule-section add-sched">
@@ -192,7 +211,6 @@
             <div v-if="scheduleDialogData">
               <div v-if="scheduleDialogData.name"><strong>Booked By:</strong> {{ scheduleDialogData.name }}</div>
               <div><strong>Doctor:</strong> {{ scheduleDialogData.doctor }}</div>
-              <div><strong>Specialization:</strong> {{ scheduleDialogData.details }}</div>
               <div v-if="hasPermission('PATIENT')">
                 <div v-if="scheduleDialogData.booked == false">
                     <div><strong>Select Services: </strong> </div>
@@ -362,6 +380,7 @@ const store = auth();
 
 const formProfile = ref(false);
 const schedules = ref([]);
+const scheduleKron = ref([]);
 const eventsMap = ref([]);
 const qrMode = ref(false);
 
@@ -390,7 +409,6 @@ const onDecode = (data) => {
         // Map user_id and id properties
         if (scheduleDialogData.value) {
           scheduleDialogData.value.doctor = response.schedule.dentist_name,
-          scheduleDialogData.value.details = response.schedule.specialization,
           scheduleDialogData.value.date = response.schedule.date,
           scheduleDialogData.value.time = convertTo12HourFormat(response.schedule.time_start),
           scheduleDialogData.value.services = response.schedule.services,
@@ -498,7 +516,6 @@ const loadData = async () => {
         eventsMap.value[schedule.date].push({
           id: schedule.id,
           doctor: schedule.dentist_name,
-          details: schedule.specialization,
           date: schedule.date,
           time: convertTo12HourFormat(schedule.time_start),
           services: schedule.services,
@@ -757,58 +774,95 @@ const onSubmit = (val) => {
 };
 
 const bookNow = (val) => {
-  $q.dialog({
-      title: "Book Now",
-      message: "Are you sure you want to book a schedule?",
-      cancel: true,
-    }).onOk(() => {
-      // submitting.value = true;
-     
-      api
-        .updateSchedule(scheduleDialogData.value.id, formInput.value)
-        .then((response) => {
-          console.log(response);
-          if (response.data?.error || response.data?.message) {
-            $q.notify({
-              color: "negative",
-              position: "top",
-              message:
-                JSON.stringify(response.data?.error) ??
-                JSON.stringify(response.data?.message) ??
-                "Failed to Update Admin",
-              icon: "report_problem",
-            });
-            // submitting.value = false;
-          } else {
-            // Error response
-            $q.notify({
-              color: "green-4",
-              textColor: "white",
-              icon: "cloud_done",
-              message: "Booked successfully!",
-            });
+  const currentDate = new Date().toISOString().split('T')[0]; // Get today's date in 'YYYY-MM-DD' format
 
-            loadData();
-            // submitting.value = false;
-            // formProfile.value = false;
-            onReset();
-            viewSchedule.value = false;
-          }
-        })
-        .catch((error) => {
-          $q.notify({
-            color: "negative",
-            position: "top",
-            message: error.message ?? "Failed to Book a Schedule",
-            icon: "report_problem",
-          });
-          // submitting.value = false;
-        });
+  // Check if the selected date is not in the past
+  if (scheduleDialogData.value.date < currentDate) {
+    $q.notify({
+      color: 'negative',
+      position: 'top',
+      message: 'Booking is already expired. Please select a valid date.',
+      icon: 'report_problem',
     });
-}
+    return;
+  }
 
+  $q.dialog({
+    title: 'Book Now',
+    message: 'Are you sure you want to book a schedule?',
+    cancel: true,
+  }).onOk(() => {
+    api
+      .updateSchedule(scheduleDialogData.value.id, formInput.value)
+      .then((response) => {
+        console.log(response);
+        if (response.data?.error || response.data?.message) {
+          $q.notify({
+            color: 'negative',
+            position: 'top',
+            message:
+              JSON.stringify(response.data?.error) ??
+              JSON.stringify(response.data?.message) ??
+              'Failed to Update Admin',
+            icon: 'report_problem',
+          });
+        } else {
+          $q.notify({
+            color: 'green-4',
+            textColor: 'white',
+            icon: 'cloud_done',
+            message: 'Booked successfully!',
+          });
 
-// api.sendSMS();
+          loadData();
+          onReset();
+          viewSchedule.value = false;
+        }
+      })
+      .catch((error) => {
+        $q.notify({
+          color: 'negative',
+          position: 'top',
+          message: error.message ?? 'Failed to Book a Schedule',
+          icon: 'report_problem',
+        });
+      });
+  });
+};
+
+const todayDate = new Date().toISOString().split('T')[0]; // Get today's date in 'YYYY-MM-DD' format
+const formatTime = (time) => {
+  const timeDate = new Date(`1970-01-01T${time}`);
+  return timeDate.toLocaleTimeString('en-US', { hour: 'numeric', minute: 'numeric', hour12: true });
+};
+
+const todaySchedule = async () => {
+  loading.value = true;
+  try {
+    const response = await api.getTodaySched();
+    if (response.message === "Schedules found for the date") {
+      const schedulesArray = Array.isArray(response.schedules) ? response.schedules : [];
+      scheduleKron.value = schedulesArray.filter(schedule => schedule.date === todayDate);
+      console.log("today schedule", response);
+      loadData();
+    } else {
+      scheduleKron.value = [];
+      console.log("No schedules for today", response);
+    }
+  } catch (error) {
+    $q.notify({
+      color: "negative",
+      position: "top",
+      message: "Loading failed",
+      icon: "report_problem",
+    });
+  } finally {
+    loading.value = false;
+  }
+};
+
+todaySchedule();
+
 
 loadData();
 
@@ -826,6 +880,12 @@ getDoctors();
       display: flex;
       justify-content: center;
       padding-top: 50px;
+      gap: 20px;
+  }
+
+  .subcontent {
+    height: 100vh;
+    overflow-x: hidden;
   }
 
   .year-header h4 {
@@ -857,9 +917,34 @@ getDoctors();
     height: 100%;
   }
    
+
+  .calendar-container {
+    display: grid;
+    grid-template-columns: 65% 35%;
+    gap: 15px;
+    padding: 30px;
+    flex-wrap: wrap;
+}
+
+  .todaySched {
+    color: #fff;
+    padding: 15px;
+    box-shadow: rgba(17, 17, 26, 0.05) 0px 1px 0px, rgba(17, 17, 26, 0.1) 0px 0px 8px;
+    background: var(--q-primary) !important;
+  }
+
+  .todaySched li {
+    list-style-type: none;
+  }
+
+  .todaySched ul {
+    padding-left: 5px;
+  }
+  
   
   .text-white {
     color: white;
+
   
   }
   

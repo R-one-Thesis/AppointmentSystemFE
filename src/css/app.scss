@@ -10,6 +10,10 @@ body  {
   font-family: 'Poppins', sans-serif;
 }
 
+h1, h2, h3, h4, h5, h6, p {
+  margin: 0;
+}
+
 .mint-green {
   color: var(--q-primary) ;
 }
@@ -23,6 +27,26 @@ body  {
 .q-layout.q-layout--standard.darkModeClass span {
   color: white !important;
 }
+
+.dark-mode .drawerActive {
+  background-color: none !important;
+  border-radius: 0;
+}
+
+.dark-mode .q-layout.q-layout--standard.darkModeClass span {
+  color: #000 !important;
+}
+
+.dark-mode .q-calendar-month__day, .dark-mode .q-calendar-month__day.q-outside, .dark-mode .q-calendar-month__day.q-disabled-day {
+  border-right: var(--calendar-border);
+  background: #000 !important;
+}
+
+.dark-mode .drawerActive {
+  background-color: none !important;
+  border-radius: 0;
+}
+
 .darkModeClass .q-table__container,
 .dark-mode .q-card,
 .dark-mode .custom-input .q-field__label.no-pointer-events.absolute.ellipsis,
@@ -54,6 +78,7 @@ body  {
 
 .dark-mode .q-btn--standard {
   color: black !important;
+  background-color: none !important;
 }
 
 .qr-dialog
@@ -81,7 +106,7 @@ body  {
   border: solid var(--q-primary) 2px;
 }
 .drawerActive {
-  background-color: var(--q-primary) !important;
+  background-color: var(--q-primary);
   border-radius: 0;
 }
 

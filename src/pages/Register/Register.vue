@@ -172,7 +172,7 @@
                                           v-model="formInput.image"
                                           @added="onFileChange"
                                         /> -->
-                                        <q-label><b>Upload Document</b></q-label>
+                                        <q-label><b>Upload Valid ID</b></q-label>
                                         <div class="q-col col-12 col-sm-12 col-md-12">
                                           <input 
                                             class="custom-input"
