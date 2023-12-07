@@ -108,24 +108,17 @@
 <script setup>
 import { ref, watch, computed } from "vue";
 import { exportFile, useQuasar } from "quasar";
-import { auth } from "../../stores/auth";
 import api from "./API";
 
 const formProfile = ref(false);
-const addTransaction = ref(true);
-const store = auth();
 const $q = useQuasar();
-const formInput = ref({conditions: []});
-const submitting = ref(false);
 const separator = ref("vertical");
 const tablerows = ref([]);
 const loading = ref(false);
 const filter = ref("");
 const deleting = ref(false);
 const selected = ref([]);
-const viewing = ref(false);
-const editMode = ref(false); // Initially, we are not in edit mode
-const recordViewing = ref(false);
+
 
 
 const columns = [
@@ -151,7 +144,7 @@ const columns = [
     align: "left",
     label: "Price",
     field: "Price",
-    field: (row) => row.price,
+    field: (row) => `₱${row.price}`,
     name: "Price",
     sortable: true,
   },
@@ -159,7 +152,7 @@ const columns = [
     align: "left",
     label: "Duration",
     field: "Duration",
-    field: (row) => row.duration,
+    field: (row) => `${Math.round(row.duration)} minutes`,
     name: "Duration",
     sortable: true,
   },
