@@ -11,9 +11,9 @@
         <!-- Your company logo goes here -->
         <img 
           alt="Quasar logo"
-          src="~assets/logo-smile.jpg"
+          src="~assets/dental.png"
           class="logo" 
-          style="width: 200px;"
+          style="width: 130px;"
         />
       </div>
       <layout-drawer-list :routes="showRoutes" />
@@ -33,10 +33,11 @@
             color="white"
           />
           <div class="head-prof">
-            <!-- <div @click="toggleDarkMode">
+            <div @click="toggleDarkMode">
               <i class="fas fa-toggle-off" v-if="!darkMode"></i>
               <i class="fas fa-toggle-on" v-else></i>
-            </div> -->
+            </div>
+            <!-- <h1>Hello</h1> -->
             <profile />
           </div>
         </q-toolbar>
